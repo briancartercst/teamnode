@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title>Floyd Central Soccer | Tournament</title>  
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/data.js?v2"></script>
+  <script src="./js/site.js?v2"></script>
+  <script>cache.page.name = 'tournament';</script>
+</head>
+
+<body>
+
+    <div class="header"></div>
+
+    <div class="jumbotron jumbotron-ad">
+      <div class="container">
+        <h1 class="sitename"><script>$('.sitename').html(cache.site.name);</script></h1>
+        <p><a class="sitename" href="index.html"><script>$('.sitename').html(cache.site.name);</script>
+          </a>&nbsp;/&nbsp;<a class="teamname" href="home.html"><script>$('.teamname').html(cache.teams[localStorage.id].name);</script></a></p>
+      </div>
+    </div>     
+    
+    <div class="container">
+      <h2 class="page-header teamname">Tournament</h2>
+      <div class="row">
+        <div class="col-sm-12" style="min-height:100px;">
+            <p class="tournamentjs">
+              <script>$('.tournamentjs').html(cache.teams[localStorage.id].tournamentjs);</script>
+            </p>  
+        </div>
+      </div>
+
+      <div class="footer"></div>
+
+    </div>  <!-- container -->  
+
+</body>
+</html>

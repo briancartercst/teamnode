@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title>Floyd Central Soccer | Teams</title>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/data.js?v2"></script>
+  <script src="./js/site.js?v2"></script>
+  <script>cache.page.name = 'index'</script>
+</head>
+<body>
+  <div class="jumbotron jumbotron-ad">
+    <div class="container">
+      <h1 id="sitename"><script>$('#sitename').html(cache.site.name);</script></h1>
+    </div>
+  </div>  
+  
+  <div class="container">    
+
+    <div id="logorow" class="row">
+      <div class="col-sm-2">
+        <p>
+        <img src="./img/logo.png" alt="logo">
+        </p>
+      </div>
+      <div class="col-sm-8">
+        <br/>
+        <p class="lead">
+          <script async>$('.lead').html(cache.site.welcome);</script>
+        </p>
+      </div>
+    </div>
+
+    <div class="teamlist"></div>
+
+<script>
+
+	//Revealing Module Design Pattern 
+	var index = (function () {
+		//Public
+		var fetchTeams = function(request, response) {
+			var html = '';
+			html  +=  '<div class="row">'; 
+			
+			var data = {"siteid":"2"};
+			$.ajax({ url: 'api/v1/teams', 
+				dataType: 'json', contentType: 'application/json',
+				type: "POST",
+				data: JSON.stringify(data), 
+				error: function (jqxhr, textStatus, errorThrown) {
+					console.log('error', textStatus, '//', errorThrown);
+				},
+				success: function (json) {
+					//console.log('json: ' + JSON.stringify(json));
+					
+					
+					$.each(json.teams, function (i, value) {
+						//console.log('team: ' + JSON.stringify(value));
+					
+						html  +=  
+							'<div class="col-sm-5">' +
+							'    <p>' +
+							'      <a id="';html+=value.shorthand;
+										html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
+										html+=value.background +';color:';
+										html+=value.fontcolor+';" href="home.html">';
+										html += value.name;
+						html += 
+							'      </a> ' +
+							'    </p> ' + 
+							'</div>';
+					});
+					
+						html += '</div>';
+						$('.teamlist').html(html);
+
+						//Cache the team selection in local storage
+						$(".btn").click(function(e) {
+						  localStorage.id = e.target.id;
+						}); 					
+				},
+				fail: function( jqxhr, textStatus, error ) {
+					var err = textStatus + ", " + error;
+					console.log( "Request Failed: " + err );
+					html  +=  
+						'<div class="col-sm-5">' +
+						'    <p>Error getting information.  Refresh and try again.' +
+						'    </p> ' + 
+						'</div>';
+					html += '</div>';
+					$('.teamlist').html(html);	
+				}			
+			});
+		}	
+		
+		//Public functions add here; Private otherwise
+		return {
+			fetchTeams: fetchTeams
+		};
+
+	})();
+	
+	$(document).ready(function () {
+		index.fetchTeams();
+	});	
+
+</script>
+
+	
+
+    <div class="footer"></div>
+  </div>  <!-- container -->  
+</body>
+</html>

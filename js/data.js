@@ -1,0 +1,263 @@
+var cache = 
+{
+    site: {
+        "name": "Floyd Central Soccer",
+        "welcome": "Welcome to the Highlanders' Website.  Choose a team below to get team details.",
+        "announcements": 
+        [
+            {"title":"title1", "text": "Announcements coming soon!",teams:["hmv","hmjv"]}
+        ],
+        "news": 
+        [
+            {"title":"title1", "text": "News coming soon!",teams:["hmv","hmjv"]}
+        ]        
+    },
+    page: {
+        "name": "default",
+        "text": "default",
+        "level": 1
+    },
+    teams: {
+        hmv:{
+            "id":"hmv",
+            "name": "Boys Varsity",
+            "block": {"background":"#31824A","fontcolor":"#ffffff"},
+            "contact":{"name":"Scott Menne","email":"scott.menne@gmail.com"},
+            "pages": [{"name":"Schedule","href":"schedule.html"},            
+                      {"name":"Roster","href":"roster.html"},
+                      {"name":"Tournament","href":"tournament.html"},
+                      {"name":"Photos","href":"photos.html"},
+                      {"name":"News","href":"news.html"},
+                      {"name":"Coaches","href":"coaches.html"}
+            ],
+            "roster": [
+                {"fname": "David", "lname":"Monolov", "position": "GK","grade": "Sr", "jersey":"0"},
+                {"fname": "Parker", "lname":"Jack", "position": "GK","grade": "Jr", "jersey":"1"},
+                {"fname": "Jacob", "lname":"Austin", "position": "D","grade": "Jr", "jersey":"3"},
+                {"fname": "Sean", "lname":"Brown", "position": "D","grade": "Jr", "jersey":"4"},
+                {"fname": "Alex", "lname":"Gillespie", "position": "D","grade": "Jr", "jersey":"6"},
+                {"fname": "Henok", "lname":"Jones", "position": "FORW","grade": "Sr", "jersey":"7"},
+                {"fname": "Tyler", "lname":"Menne", "position": "MF","grade": "Sr", "jersey":"10"},
+                {"fname": "Brody", "lname":"Zink", "position": "MF","grade": "So", "jersey":"12"},
+                {"fname": "Evan", "lname":"Sakamaki", "position": "D","grade": "So", "jersey":"13"},
+                {"fname": "Matthew", "lname":"Siebert", "position": "D","grade": "Sr", "jersey":"13"},
+                {"fname": "Ethan", "lname":"Worrall", "position": "FORW","grade": "So", "jersey":"15"},
+                {"fname": "Landon", "lname":"Campbell", "position": "MF","grade": "So", "jersey":"16"},
+                {"fname": "Parker", "lname":"Bussabarger-davidenkoff", "position": "Sr","grade": "Jr", "jersey":"17"},
+                {"fname": "Evan", "lname":"Rohde", "position": "D","grade": "Jr", "jersey":"18"},
+                {"fname": "Logan", "lname":"Howland", "position": "MF","grade": "Sr", "jersey":"19"},
+                {"fname": "Hunter", "lname":"Poff", "position": "D","grade": "Sr", "jersey":"20"},
+                {"fname": "Hasaan", "lname":"Ladha", "position": "D","grade": "Sr", "jersey":"22"},
+                {"fname": "Tyler", "lname":"Mcgeorge", "position": "MF","grade": "Sr", "jersey":"23"},
+                {"fname": "Keaton", "lname":"Jacobi", "position": "MF","grade": "So", "jersey":"25"},
+            ],            
+            "results": [
+                {"date":"08/18 5:30p","opponent": "Columbus East (Columbus, IN)","location":"Columbus East","score":"0 - 2","result":"loss"},
+                {"date":"08/19 7:30p","opponent":"Ballard (Louisville, KY)","location":"Floyd Central High School","score":"1 - 0","result":"win"},
+                {"date":"08/21 7:30p","opponent":"Forest Park (Ferdinand, IN)","location":"Floyd Central High School","score":"5 - 0","result":"win"},
+                {"date":"08/23 1:30p","opponent":"Bedford North Lawrence (Bedford, IN)","location":"Floyd Central High School","score":"2 - 1","result":"win"},
+                {"date":"08/28 7:00p","opponent":"Providence (Clarksville, IN)","location":"Providence High School","score":"5 - 1","result":"win"},
+                {"date":"09/03 7:30p","opponent":"Trinity (Louisville, KY)","location":"Trinity High School","score":"0 - 4","result":"loss"},
+                {"date":"09/11 7:00p","opponent":"Jeffersonville (Jeffersonville, IN)","location":"Floyd Central High School","score":"3 - 3","result":"tie"},
+                {"date":"09/16 7:30p","opponent":"Seymour (Seymour, IN)","location":"Seymour High School","score":"5 - 2","result":"win"},
+                {"date":"09/18 7:00p","opponent":"New Albany (New Albany, IN)","location":"Floyd Central High School","score":"2 - 0","result":"win"},
+                {"date":"09/20 1:15p","opponent":"Washington (Washington, IN)","location":"Ft. Wayne Canterbury Classic","score":"3 - 0","result":"win"},
+                {"date":"09/20 5:15p","opponent":"Fort Wayne Canterbury (Fort Wayne, IN)","location":"Canterbury HS (Stadium)","score":"1 - 3","result":"loss"},
+                {"date":"09/23 7:30p","opponent":"Louisville Collegiate (Louisville, KY)","location":"Floyd Central High School","score":"1 - 1","result":"tie"},
+                {"date":"09/27 1:30p","opponent":"Jennings County (North Vernon, IN)","location":"Floyd Central High School","score":"10 - 0","result":"win"},
+                {"date":"10/01 ","opponent":"Corydon Central (Corydon, IN)","location":"Floyd Central High School","score":"8 - 1","result":"win"},
+                {"date":"10/02 7:00p","opponent":"Madison (Madison, IN)","location":"Madison High School","score":"7 - 1","result":"win"},
+                {"date":"10/06 6:00p","opponent":"Silver Creek (Sellersburg, IN)","location":"2014-15 IHSAA Class 2A Boys Soccer State Tournament - Sect. 30: Floyd Central","score":"","result":""},
+                {"date":"10/08 7:00p","opponent":"TBA","location":"Floyd Central High School","score":"","result":""},
+                {"date":"10/11 2:00p","opponent":"TBA","location":"Floyd Central High School","score":" ","result":""},
+                {"date":"10/18 7:00p","opponent":"TBA","location":"Location:TBA High School","score":"","result":""},
+                {"date":"10/25 2:00p","opponent":"TBA","location":"Location: TBA High School","score":"","result":""},
+                {"date":"11/01 7:00p","opponent":"TBA","location":"Location: TBA High School","score":"","result":""},
+            ],
+            "tournamentjs":"<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Boys Soccer State Tournament Sect. 30: Floyd Central<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"
+        },    
+        hmjv:{
+            "id":"hmjv",            
+            "name": "Boys JV",
+            "block": {"background":"#31824A","fontcolor":"#ffffff"},
+            "contact":{"name":"Scott Menne","email":"scott.menne@gmail.com"},
+            "pages": [{"name":"Schedule","href":"schedule.html"},            
+                      {"name":"Roster","href":"roster.html"},
+                      {"name":"Tournament","href":"tournament.html"},
+                      {"name":"Photos","href":"photos.html"},
+                      {"name":"News","href":"news.html"},
+                      {"name":"Coaches","href":"coaches.html"}
+            ],        
+            "roster": [
+                {"fname": "Tyler ", "lname":"Thulier","position": "","grade": "", "jersey":"1"},
+                {"fname": "Max ", "lname":"Hauser","position": "","grade": "", "jersey":"2"},
+                {"fname": "Evan ", "lname":"Sakemaki","position": "","grade": "", "jersey":"3"},
+                {"fname": "Evan", "lname":"Michell","position": "","grade": "", "jersey":"4"},
+                {"fname": "Trey", "lname":"Meyer","position": "","grade": "", "jersey":"5"},
+                {"fname": "David", "lname":"Greene","position": "","grade": "", "jersey":"6"},
+                {"fname": "John", "lname":"Moss","position": "","grade": "", "jersey":"7"},
+                {"fname": "Will", "lname":"Haley","position": "","grade": "", "jersey":"8"},
+                {"fname": "Jacob", "lname":"Taylor","position": "","grade": "", "jersey":"9"},
+                {"fname": "Nikolas", "lname":"Vellinger (K)","position": "","grade": "", "jersey":"10"},
+                {"fname": "Brad", "lname":"Foster","position": "","grade": "", "jersey":"11"},
+                {"fname": "Braden", "lname":"Edwards (K)","position": "","grade": "", "jersey":"12"},
+                {"fname": "Sam", "lname":"Epperson","position": "","grade": "", "jersey":"13"},
+                {"fname": "Connor", "lname":"Kantz","position": "","grade": "", "jersey":"14"},
+                {"fname": "Brandon", "lname":"McGeorge","position": "","grade": "", "jersey":"15"},
+                {"fname": "Landon", "lname":"Tak","position": "","grade": "", "jersey":"16"},
+                {"fname": "Jordan", "lname":"Bales","position": "","grade": "", "jersey":"17"},
+                {"fname": "Jordan", "lname":"Eversman","position": "","grade": "", "jersey":"18"},
+                {"fname": "Jacob", "lname":"Cash","position": "","grade": "", "jersey":"19"},
+                {"fname": "Jason", "lname":"Forbes","position": "","grade": "", "jersey":"20"},
+                {"fname": "Jacob", "lname":"Forbes","position": "","grade": "", "jersey":"21"},
+                {"fname": "Garrison", "lname":"Koch","position": "","grade": "", "jersey":"22"},
+                {"fname": "Jordan", "lname":"McGehee","position": "","grade": "", "jersey":"23"},
+                {"fname": "Ethan", "lname":"Worrall","position": "","grade": "", "jersey":"24"},
+                {"fname": "Keaton", "lname":"Jacobi","position": "","grade": "", "jersey":"25"},
+                {"fname": "Landon", "lname":"Campbell","position": "","grade": "", "jersey":"26"},
+            ],              
+            "results": [
+                {"date":"08/18","opponent": "@ Columbus East","location":"","score":"1 - 3","result":"loss"},
+                {"date":"08/19","opponent": "Ballard","location":"","score":"0 - 0","result":"tie"},
+                {"date":"08/21","opponent": "Forest Park","location":"","score":"5 - 0","result":"win"},
+                {"date":"08/23","opponent": "Bedford NL","location":"","score":"5 - 0","result":"win"},
+                {"date":"08/28","opponent": "@ Providence","location":"","score":"0 - 1 ","result":"loss"},
+                {"date":"09/03","opponent": "@ Trinity","location":"","score":"2 - 0","result":"loss"},
+                {"date":"09/11","opponent": "Jeffersonville","location":"","score":"0 - 1","result":"loss"},
+                {"date":"09/16","opponent": "@ Seymour","location":"","score":"1 - 1 ","result":"tie"},
+                {"date":"09/18","opponent": "New Albany","location":"","score":"6 - 0","result":"win"},
+                {"date":"09/23","opponent": "Collegiate","location":"","score":"0 - 0","result":"tie"},
+                {"date":"09/24","opponent": "North Harrison","location":"","score":"9 - 0","result":"win"},
+                {"date":"09/27","opponent": "Jennings Co.","location":"","score":"5 - 0","result":"win"},
+                {"date":"10/01","opponent": "Corydon","location":"","score":"5 - 0","result":"win"},
+                {"date":"10/02","opponent": "@ Madison","location":"","score":"2 - 0","result":"win"},
+            ],                    
+            "tournamentjs":"<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Boys Soccer State Tournament Sect. 30: Floyd Central<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"
+        },
+        hwv:{
+            "id":"hwv",            
+            "name": "Girls Varsity",
+            "block": {"background":"#FDF21C","fontcolor":"#282828"},
+            "contact":{"name":"Scott Menne","email":"scott.menne@gmail.com"},            
+            "pages": [{"name":"Schedule","href":"schedule.html"},            
+                      {"name":"Roster","href":"roster.html"},
+                      {"name":"Tournament","href":"tournament.html"},
+                      {"name":"Photos","href":"photos.html"},
+                      {"name":"News","href":"news.html"},
+                      {"name":"Coaches","href":"coaches.html"}
+            ],        
+            "roster": [
+                {"fname": "Reagan", "lname":"O'Farrell","position": "keeper","grade": "9", "jersey":"0/11"},
+                {"fname": "Samantha", "lname":"Fitzgerald","position": "keeper","grade": "9", "jersey":"00"},
+                {"fname": "Carly", "lname":"Stevens","position": "midfielder","grade": "12", "jersey":"1"},
+                {"fname": "Samantha", "lname":"Garcia","position": "forward","grade": "10", "jersey":"2"},
+                {"fname": "Quinn", "lname":"Fitzgerald","position": "defender","grade": "11", "jersey":"4"},
+                {"fname": "Olivia", "lname":"Hein","position": "defender","grade": "12", "jersey":"5"},
+                {"fname": "Halee", "lname":"Tanner","position": "midfielder","grade": "10", "jersey":"6"},
+                {"fname": "Christin", "lname":"Miller","position": "forward","grade": "12", "jersey":"7"},
+                {"fname": "Gracie", "lname":"Fitzgerald","position": "defender","grade": "10", "jersey":"8"},
+                {"fname": "Erin", "lname":"O'Farrell","position": "forward","grade": "9", "jersey":"9"},
+                {"fname": "Paige", "lname":"Spiller","position": "defender/mid","grade": "11", "jersey":"10"},
+                {"fname": "Samantha", "lname":"Fell","position": "defender","grade": "9", "jersey":"12"},
+                {"fname": "Emma", "lname":"Farnsley","position": "midfielder","grade": "9", "jersey":"13"},
+                {"fname": "Presley", "lname":"Roos","position": "midfielder","grade": "11", "jersey":"14"},
+                {"fname": "Blair", "lname":"Book","position": "defender","grade": "11", "jersey":"15"},
+                {"fname": "Sami", "lname":"Sears","position": "midfielder","grade": "10", "jersey":"17"},
+                {"fname": "Emily", "lname":"Lewis","position": "midfielder/def","grade": "12", "jersey":"21"},
+                {"fname": "Emma", "lname":"Pappas","position": "forward","grade": "10", "jersey":"22"},
+                {"fname": "Maggie", "lname":"O'Ferrell","position": "defender","grade": "12", "jersey":"24"},
+                {"fname": "Leah", "lname":"Ellis","position": "defender","grade": "12", "jersey":"25"},
+                {"fname": "Mandy", "lname":"Ellis","position": "midfielder","grade": "10", "jersey":"27"},
+            ],               
+            "results": [
+                {"date":"08/28 7:00p","opponent": "@ Mercy (Louisville, KY)","location":"Mercy High School","score":"2 - 3","result":"loss"},
+                {"date":"09/02 7:30p","opponent": "Jasper (Jasper, IN)","location":"Floyd Central High School","score":"0 - 2","result":"loss"},
+                {"date":"09/09 7:00p","opponent": "Providence (Clarksville, IN)","location":"Floyd Central High School","score":"2 - 3","result":"loss"},
+                {"date":"09/13 6:30p","opponent": "@ Columbus East (Columbus, IN)","location":"Columbus East High School","score":"0 - 4","result":"loss"},
+                {"date":"09/16","opponent": "Seymour (Seymour, IN)","location":" Floyd Central, Girls Varsity","score":"8 - 1","result":"win"},
+                {"date":"09/17 6:00p","opponent": "@ New Albany (New Albany, IN)","location":"New Albany High School","score":"6 - 0","result":"win"},
+                {"date":"09/20 2:30p","opponent": "@ Bloomington North (Bloomington, IN)","location":"Bloomington North High School","score":"3 - 1","result":"win"},
+                {"date":"09/25 7:00p","opponent": "@ Jennings County (North Vernon, IN)","location":"Jennings County High School","score":"4 - 2","result":"win"},
+                {"date":"09/27 1:30a","opponent": "East Central (St. Leon, IN)","location":"","score":"0 - 6","result":"loss"},
+                {"date":"09/27 10:00a","opponent": "@ Center Grove (Greenwood, IN)","location":"Game Details: Center Grove Invitational","score":"0 - 7","result":"loss"},
+                {"date":"09/30 7:00p","opponent": "@ Jeffersonville (Jeffersonville, IN)","location":"Jeffersonville High School","score":"5 - 0","result":"win"},
+                {"date":"10/02 7:30p","opponent": "Madison (Madison, IN)","location":"Floyd Central High School","score":"","result":"Forfeit (M)"},
+                {"date":"10/04 6:00p","opponent": "Bedford North Lawrence (Bedford, IN)","location":"Floyd Central High School","score":"0 - 0","result":"tie"},
+                {"date":"10/04 7:30p","opponent": "Bedford North Lawrence (Bedford, IN)","location":"Floyd Central High School","score":"3 - 0","result":"win"},
+                {"date":"10/09 7:00p","opponent": "Silver Creek (Sellersburg, IN)","location":"2014-15 IHSAA Class 2A Girls Soccer State Tournament - Sect. 30: Floyd Central","score":"","result":""},
+            ],
+            "tournamentjs":"<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=ce329d7b-dc40-e411-b4d2-002655e6c45a&ssid=8a56a490-d455-4969-a16a-0fdfc001e119&bracketid=dcc67f6c-6a42-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Girls Soccer State Tournament<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"
+        },
+        hwjv:{
+            "id":"hwjv",            
+            "name": "Girls JV",
+            "block": {"background":"#FDF21C","fontcolor":"#282828"},
+            "contact":{"name":"Scott Menne","email":"scott.menne@gmail.com"},
+            "pages": [{"name":"Schedule","href":"schedule.html"},            
+                      {"name":"Roster","href":"roster.html"},
+                      {"name":"Tournament","href":"tournament.html"},
+                      {"name":"Photos","href":"photos.html"},
+                      {"name":"News","href":"news.html"},
+                      {"name":"Coaches","href":"coaches.html"}
+            ],
+            "roster": [
+                {"fname": "Samantha", "lname":"Fitzgerald","position": "keeper/defender","grade": "9", "jersey":"00/27"},
+                {"fname": "Emily", "lname":"Chestnut","position": "defender","grade": "9", "jersey":"2"},
+                {"fname": "Sierra", "lname":"Nelson","position": "forward","grade": "9", "jersey":"3"},
+                {"fname": "Mikaela", "lname":"Mercer","position": "defneder","grade": "11", "jersey":"4"},
+                {"fname": "Zoe", "lname":"Fifer","position": "forward","grade": "9", "jersey":"5"},
+                {"fname": "Gillian", "lname":"Coffey","position": "midfielder","grade": "9", "jersey":"7"},
+                {"fname": "Gabi", "lname":"Brodfehrer","position": "defender","grade": "9", "jersey":"8"},
+                {"fname": "Bathany", "lname":"Obermeyer","position": "midfielder","grade": "9", "jersey":"9"},
+                {"fname": "Reagan", "lname":"O'Farrell","position": "forward","grade": "9", "jersey":"10"},
+                {"fname": "Samantha", "lname":"Yaden","position": "forward","grade": "9", "jersey":"11"},
+                {"fname": "Victoria", "lname":"McMurray","position": "defender","grade": "9", "jersey":"12"},
+                {"fname": "Taylor", "lname":"Wilhoite","position": "forward","grade": "10", "jersey":"13"},
+                {"fname": "Regan", "lname":"Oliver","position": "defender","grade": "11", "jersey":"14"},
+                {"fname": "Blair", "lname":"Book","position": "defender","grade": "11", "jersey":"15"},
+                {"fname": "Louise", "lname":"Scharff","position": "midfielder","grade": "9", "jersey":"16"},
+                {"fname": "Courtney", "lname":"Ford","position": "defender","grade": "9", "jersey":"17"},
+                {"fname": "Lacy", "lname":"Brown","position": "mid/forward","grade": "9", "jersey":"18"},
+                {"fname": "Erin", "lname":"O'Farrell","position": "midfield","grade": "9", "jersey":"20"},
+                {"fname": "Samantha", "lname":"Fell","position": "defender","grade": "9", "jersey":"21"},
+                {"fname": "Alyvia", "lname":"Chestnut","position": "defender","grade": "10", "jersey":"22"},
+                {"fname": "Abby", "lname":"May","position": "defender","grade": "9", "jersey":"23"},
+                {"fname": "Elizabeth", "lname":"Tong","position": "defender","grade": "9", "jersey":"25"},
+                {"fname": "Broooke", "lname":"Chew","position": "defender","grade": "9", "jersey":"26"},
+                {"fname": "Emma", "lname":"Farnsley","position": "midfielder","grade": "9", "jersey":"28"},
+
+            ],               
+            "results": [
+                {"date":"08/28","opponent": "Mercy (Louisville, KY)","location":"Mercy High School","score":"","result":"loss"},
+                {"date":"09/02","opponent": "Jasper (Jasper, IN)","location":"Floyd Central High School","score":"","result":"win"},
+                {"date":"09/09","opponent": "Providence (Clarksville, IN)","location":"Floyd Central High School","score":"","result":"win"},
+                {"date":"09/10","opponent": "North Harrison (Ramsey,IN)","location":"North Harrison High School","score":"","result":"loss"},
+                {"date":"09/13","opponent": "Columbus East (Columbus, IN)","location":"Columbus East High School","score":"","result":"loss"},
+                {"date":"09/16","opponent": "Seymour (Seymour, IN)","location":"Floyd Central High School","score":"","result":"win"},
+                {"date":"09/17","opponent": "New Albany (New Albany, IN)","location":"New Albany High School","score":"","result":"win"},
+                {"date":"09/30","opponent": "Jeffersonville (Jeffersonville, IN)","location":"Jeffersonville High School","score":"","result":"win"},
+                {"date":"10/04","opponent": "Bedford North Lawrence (Bedford, IN)","location":"Floyd Central High School","score":"","result":""},
+            ],                    
+            "tournamentjs":"<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=ce329d7b-dc40-e411-b4d2-002655e6c45a&ssid=8a56a490-d455-4969-a16a-0fdfc001e119&bracketid=dcc67f6c-6a42-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Girls Soccer State Tournament<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"
+        }                
+    } 
+};
+
+
+//If required to get cache from server, 
+//following refactor will pull from url
+//getJSON refactor to include caching
+/*
+(function () {
+    $.getJSON = function(url, callback, cache)
+    {
+        $.ajax({
+                type: "GET",
+                url: url,
+                success: callback,
+                dataType: "json",
+                cache: cache
+        });
+    };
+})();
+*/

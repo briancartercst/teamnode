@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title>Floyd Central Soccer | Roster</title>  
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/data.js?v2"></script>
+  <script src="./js/site.js?v2"></script>
+  <script>cache.page.name = 'roster'</script>
+</head>
+
+<body>
+  <div class="header"></div>  
+
+    <div class="jumbotron jumbotron-ad">
+      <div class="container">
+        <h1 class="sitename"><script>$('.sitename').html(cache.site.name);</script></h1>
+        <p><a class="sitename" href="index.html"><script>$('.sitename').html(cache.site.name);</script>
+          </a>&nbsp;/&nbsp;<a class="teamname" href="home.html"><script>$('.teamname').html(cache.teams[localStorage.id].name);</script></a></p>
+      </div>
+    </div>  
+  
+  <div class="container">
+    <h2 class="page-header">Roster</h2>
+
+    <div class="row alert alert-neutral" role="alert">
+      <div class="col-sm-2">
+        <b>Jersey</b>
+      </div>
+      <div class="col-sm-4">
+          <b>Name</b>            
+      </div>
+      <div class="col-sm-2">
+          <b>Position</b>
+      </div> 
+      <div class="col-sm-2">
+          <b>Grade</b>
+      </div>              
+    </div>
+
+    <div class="roster"></div>
+    <script>
+    (function() {
+      var html = '';
+      $.each(cache.teams[localStorage.id].roster, function() {      
+          html += 
+          '<div class="row alert alert-neutral" role="alert">' +
+          '  <div class="col-sm-2">' +
+          '   <span>'; html+=this.jersey;html+='</span>' +
+          '   </div>' +
+          '  <div class="col-sm-4">' +
+          '      <span>';html+=this.fname+' '+this.lname;html+='</span> ' +           
+          '  </div>' +
+          '  <div class="col-sm-2">' +
+          '      <span>';html+=this.position;html+='</span>' +
+          '  </div>    ' + 
+          '  <div class="col-sm-2">' +
+          '      <span>';html+=this.grade;html+='</span>' +
+          '  </div>    ' +                 
+          '</div> ';
+      });
+
+      $('.roster').html(html);
+  })();
+  </script>
+     
+  <div class="footer"></div>
+</body>
+</html>

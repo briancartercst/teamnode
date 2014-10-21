@@ -46,7 +46,11 @@ var TeamServerAPIv1 = (function () {
 	 
 		extension = path.extname(pathname).substr(1);
 		mimeType = mimeTypes[extension] || 'application/octet-stream';
-		response.writeHead(200, {'Content-Type': mimeType});
+		
+		//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
+		response.writeHead(200, {'Content-Type': mimeType,"Cache-Control": "public, max-age=600, s-maxage=3600"});			
+		//response.writeHead(200, {'Content-Type': mimeType});
+		
 		console.log('serving ' + filename + ' as ' + mimeType);
 		//console.log('serving pathname ' + pathname + ' as ' + mimeType);
 
@@ -58,7 +62,9 @@ var TeamServerAPIv1 = (function () {
 		var jsonData;
 		console.log('api v1: doing fetchSites');
 
+		//response.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});	
 		response.writeHead(200, {'Content-Type': 'application/json'});
+		
 		jsonData = { sites: [] };
 		dbSelectSites.each(function (err, row) {
 			jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
@@ -69,7 +75,7 @@ var TeamServerAPIv1 = (function () {
 	};
 
 	var fetchTeams = function(request, response) {
-		console.log('api v1: fetchMessage');
+		console.log('api v1: fetchTeams');
 
 		var postText = '';
 		request.setEncoding('utf8');
@@ -92,7 +98,9 @@ var TeamServerAPIv1 = (function () {
 				return;
 			}
 
+			//response.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});
 			response.writeHead(200, {'Content-Type': 'application/json'});
+			
 			jsonData = { teams: [] };
 			dbSelectTeams.each([postData.siteid],function (err, row) {
 				jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
@@ -105,7 +113,7 @@ var TeamServerAPIv1 = (function () {
 
 	var addNewSite = function(request, response) {
 		var postText = '';
-		console.log('api v1: doing add');
+		console.log('api v1: addNewSite');
 		request.setEncoding('utf8');
 		request.addListener('data', function (postDataChunk) {
 			postText += postDataChunk;
