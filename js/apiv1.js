@@ -8,15 +8,22 @@ var sqlite3 = require('sqlite3');
 
 //Revealing Module Design Pattern 
 //Immediately-Invoked-Function-Expression, it declares a function, which then calls itself immediately 
-var TeamServerAPIv1 = (function () {
+var apiV1 = (function () {
 	var	mimeTypes = {'html': 'text/html', 'png': 'image/png', "jpeg": "image/jpeg", "jpg": "image/jpeg", 'js': 'text/javascript', 'css': 'text/css'};
-	var	db = {};
-	var	dbSelectSites = {};
-	var	dbInsertStmt = {};
-	var	dbSelectTeams = {};
+	var	db = new sqlite3.Database('teamnode.db');
+	
+	var	dbLastInsertId = db.prepare('SELECT last_insert_rowid() as id');	
+	var	dbSelectSites = db.prepare('SELECT id, shorthand, name, welcome FROM sites');
+	var	dbSelectSite = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE id = (?)');
+	var	dbSelectSiteByShorthand = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE shorthand = (?)');
+	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE siteid = (?)');	
+	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');			
+	var	dbInsertSite = db.prepare('INSERT INTO sites (shorthand, name, welcome) VALUES (?, ?, ?)');
+	var	dbUpdateSite = db.prepare('UPDATE sites SET shorthand=?, name=?, welcome=? WHERE id = ?');	
+		
 	var msgMissingParms = '{"error": "missing parameters: ';
 	var msgBadRequest = '{"error": "bad request"}';
-
+	
 	var serveFromDisk = function(filename, response) {
 		var pathname = path.join(process.cwd(), unescape(filename));
 		var stats, extension, mimeType, fileStream;		
@@ -31,10 +38,9 @@ var TeamServerAPIv1 = (function () {
 		}
 
 		if (stats.isFile()) {
-			// path exists, is a file
+			//path exists, is a file
 		} else if (stats.isDirectory()) {
-			// path exists, is a directory
-			//console.log('process directory');
+			//path exists, is a directory
 			filename = filename + '/index.html';
 			pathname = pathname  + '\\index.html';
 		} else {
@@ -46,113 +52,168 @@ var TeamServerAPIv1 = (function () {
 	 
 		extension = path.extname(pathname).substr(1);
 		mimeType = mimeTypes[extension] || 'application/octet-stream';
+
+		console.log('serving ' + filename + ' as ' + mimeType);
 		
 		//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
-		response.writeHead(200, {'Content-Type': mimeType,"Cache-Control": "public, max-age=600, s-maxage=3600"});			
-		//response.writeHead(200, {'Content-Type': mimeType});
+		//response.writeHead(200, {'Content-Type': mimeType,"Cache-Control": "public, max-age=600, s-maxage=3600"});			
+		response.writeHead(200, {'Content-Type': mimeType});
 		
-		console.log('serving ' + filename + ' as ' + mimeType);
-		//console.log('serving pathname ' + pathname + ' as ' + mimeType);
-
 		fileStream = fs.createReadStream(pathname);
 		fileStream.pipe(response);
 	}; 
 	
-	var fetchSites = function(request, response) {
-		var jsonData;
-		console.log('api v1: doing fetchSites');
-
-		//response.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});	
-		response.writeHead(200, {'Content-Type': 'application/json'});
-		
-		jsonData = { sites: [] };
-		dbSelectSites.each(function (err, row) {
-			jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
-		}, function () {
-			response.write(JSON.stringify(jsonData));
-			response.end();
-		});
+	var fetchLastInsertId = function(callback) {
+		dbLastInsertId.each(function (err, row) {
+			if(err) {
+				callback(err);
+			} else {
+				callback(null,row);
+			}
+		});	
 	};
 
-	var fetchTeams = function(request, response) {
-		console.log('api v1: fetchTeams');
-
-		var postText = '';
-		request.setEncoding('utf8');
-		request.addListener('data', function (postDataChunk) {
-			postText += postDataChunk;
-		});
-		request.addListener('end', function () {
-			if( postText == '') {
-				response.writeHead(400, {'Content-Type': 'application/json'});
-				response.write(msgMissingParms + ' siteid"}');
-				response.end(); 
-				return;
+	var fetchSites = function(data, callback) {
+		console.log('api v1: fetchSites');
+		var jsonData = { sites: [] };			
+	
+		if(data) {	
+			if( data.id) {
+				dbSelectSite.each([data.id],function (err, row) {
+					if(err) {
+						callback(err);
+					} else {
+						jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
+					}
+				}, function () {
+					callback(null,jsonData);
+				});
+			} else {
+				if(data.shorthand) {
+					dbSelectSiteByShorthand.each([data.shorthand],function (err, row) {
+						if(err) {
+							callback(err);
+						} else {
+							jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
+						}
+					}, function () {
+						callback(null,jsonData);
+					});			
+				} else {
+					callback(new Error('Missing id or shorthand'));				
+				}
 			}
-			
-			var postData = JSON.parse(postText);
-			if( postData.siteid == null || postData.id == '') {
-				response.writeHead(400, {'Content-Type': 'application/json'});
-				response.write(msgMissingParms + 'siteid"}');
-				response.end(); 
-				return;
-			}
-
-			//response.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});
-			response.writeHead(200, {'Content-Type': 'application/json'});
-			
-			jsonData = { teams: [] };
-			dbSelectTeams.each([postData.siteid],function (err, row) {
-				jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+		} else {		
+			dbSelectSites.each(function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
+				}	
 			}, function () {
-				response.write(JSON.stringify(jsonData));
-				response.end();
-			});			
-		});
-	};
+				callback(null,jsonData);
+			});	
+		}
+	};	
 
-	var addNewSite = function(request, response) {
-		var postText = '';
-		console.log('api v1: addNewSite');
-		request.setEncoding('utf8');
-		request.addListener('data', function (postDataChunk) {
-			postText += postDataChunk;
-		});
-		request.addListener('end', function () {
-			var postData = JSON.parse(postText);
+	var fetchTeams = function(data, callback) {
+		console.log('api v1: fetchTeams');
+		var jsonData = { teams: [] };			
+	
+		if(data) {	
+			if(data.siteid) {
+				dbSelectTeams.each([data.siteid],function (err, row) {
+					if(err) {
+						callback(err);
+					} else {
+						jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+					}
+				}, function () {
+					callback(null,jsonData);
+				});	
+			} else { 
+				if(data.id) {			
+					dbSelectTeam.each([data.id],function (err, row) {
+						if(err) {
+							callback(err);
+						} else {
+							jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+						}
+					}, function () {
+						callback(null,jsonData);
+					});
+				} else {
+						callback(new Error('Missing siteid'));
+				}
+			}
+		} else {
+			callback(new Error('Missing siteid or teamid'));
+		}
+	};	
+	
 
-			dbInsertSite.run(postData.shorthand, postData.name, postData.welcome, function () {
-				var message = {"status": "success"};
-				response.writeHead(200, {'Content-Type': 'application/json'});				
-				response.write(JSON.stringify(message));
-				response.end();			
+	var addSite = function(data, callback) {
+		console.log('api v1: addSite');
+	
+		if(data) {	
+			dbInsertSite.run(data.shorthand, data.name, data.welcome, function (err) {
+				if(err) {
+					callback(err);
+				} else {
+					fetchLastInsertId(function (err, row) {
+						if(err) {
+							callback(err);
+						} else {
+							callback(null,row);
+						}
+					});
+				}
 			});
-		});
+		} else {
+			callback(new Error('Missing data'));
+		}
 	};
-
-	//Immediately-Invoked-Function-Expression
-	var init = function () {
-		console.log("TeamServerAPIv1 init");
+	
+	var updateSite = function(data, callback) {
+		console.log('api v1: updateSite');
 		
-		db = new sqlite3.Database('teamnode.db');
-		dbSelectSites = db.prepare('SELECT id, shorthand, name, welcome FROM sites');
-		dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE siteid = (?)');	
-		dbInsertSite = db.prepare('INSERT INTO sites (shorthand, name, welcome) VALUES (?, ?, ?)');
-	}(); 	
-  
+		console.log('data: ' + JSON.stringify(data));
+	
+		if(data) {	
+			dbUpdateSite.run(data.shorthand, data.name, data.welcome, data.id, function (err) {
+				if(err) {
+					callback(err);
+				} else {
+					fetchSites({id: data.id}, function (err, row) {
+						if(err) {
+							callback(err);
+						} else {
+							callback(null,row);
+						}
+					});
+				}
+			});
+		} else {
+			callback(new Error('Missing data'));
+		}
+	};	
+ 
 	//Expose methods as public
 	return {
-		init: init,
 		serveFromDisk: serveFromDisk,
 		fetchSites: fetchSites,
 		fetchTeams: fetchTeams,
-		addNewSite: addNewSite,
+		addSite: addSite,
+		updateSite: updateSite
 	};
-
+	
 })();
 
 //Export functions that are exposed for use by other modules
-exports.fetchSites = TeamServerAPIv1.fetchSites;
-exports.fetchTeams = TeamServerAPIv1.fetchTeams;
-exports.addNewSite = TeamServerAPIv1.addNewSite;
-exports.serveFromDisk = TeamServerAPIv1.serveFromDisk;
+exports.fetchSites = apiV1.fetchSites;
+exports.fetchTeams = apiV1.fetchTeams;
+exports.addSite = apiV1.addSite;
+exports.serveFromDisk = apiV1.serveFromDisk;
+exports.updateSite = apiV1.updateSite;
+
+
