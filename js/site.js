@@ -48,22 +48,37 @@ function header() {
 		'        <span class="sr-only">Toggle navigation</span>' +
 		'        <i class="fa fa-bars fa-lg"></i>' +
 		'      </button>' +
-		'      <a class="navbar-brand" href="index.html">';html+=cache.site.name;html+='</a>' +
+		'      <a class="navbar-brand" href="index.html">';html+=localStorage.sitename;html+='</a>' +
 		'    </div>' +
 		'    <div class="navbar-collapse collapse" style="height: 1px;">' +
 		'      <ul class="nav navbar-nav">' +
-		'        <li '; if(cache.page.name=='home'){html +='class="active"'}; html+='><a href="home.html">Home</a></li>' +
-		'        <li '; if(cache.page.name=='schedule'){html +='class="active"'}; html+='><a href="schedule.html">Schedule</a></li>' +
-		'        <li '; if(cache.page.name=='roster'){html +='class="active"'}; html+='><a href="roster.html">Roster</a></li>' +
-		'        <li '; if(cache.page.name=='tournament'){html +='class="active"'}; html+='><a href="tournament.html">Tournament</a></li>' +
-		'        <li '; if(cache.page.name=='photos'){html +='class="active"'}; html+='><a href="photos.html">Photos</a></li>' +
-		'        <li '; if(cache.page.name=='news'){html +='class="active"'}; html+='><a href="news.html">News</a></li>' +
-		'        <li '; if(cache.page.name=='coaches'){html +='class="active"'}; html+='><a href="coaches.html">Coaches</a></li>' +				
 		'      </ul>' +
 		'    </div>' +
 		'  </div>' +
 		'</div>';
+		
+		var data = {teamid:localStorage.teamid};
+		$.ajax({ url: 'api/v1/pages', 
+			dataType: 'json', contentType: 'application/json',
+			type: "POST",
+			data: JSON.stringify(data), 
+			error: function (jqxhr, textStatus, errorThrown) {
+				console.log('error', textStatus, '//', errorThrown);
+			},
+			success: function (data) {
+				//console.log('data: ' + JSON.stringify(data));	
+				var html = '';
+				$.each(data.pages, function (i, value) {
+					//console.log('value: ' + JSON.stringify(value));
+					html  += '        <li '; if(cache.page.name=='home'){html +='class="active"'}; html+='><a href="'+ value.url +'">'+ value.name +'</a></li>';
+				});
 
+				$('.nav').html(html);
+			},
+			fail: function( jqxhr, textStatus, error ) {
+			}			
+		});	
+		
 	return html;
 }
 
@@ -72,7 +87,7 @@ function footer() {
       '<div class="row">' +
       '  <div class="col-sm-12">' +
       '      <p>' +
-      '        &copy; ' + cache.site.name;
+      '        &copy; ' + localStorage.sitename;
       '      </p> ' + 
       '  </div>';
 

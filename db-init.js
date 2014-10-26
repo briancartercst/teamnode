@@ -56,11 +56,11 @@ db.serialize(function() {
 //add teams
 db.serialize(function() {
 	var dataTeams = [
-		["sss", "bv", "Boys Varsity", "#9966FF", "#282828","John Doe","not.real@notreal.ic"],	
-		["sss", "bjv", "Boys JV", "#9966FF", "#282828","John Doe","not.real@notreal.ic"],
-		["sss", "gv", "Girls Varsity", "#9966FF", "#282828","John Doe","not.real@notreal.ic"],
-		["sss", "gjv", "Girls JV", "#9966FF", "#282828","John Doe","not.real@notreal.ic"],
-		["sss", "m", "Boys & Girls Middle", "#9966FF", "#282828","John Doe","not.real@notreal.ic"],		
+		["sss", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],	
+		["sss", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
+		["sss", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
+		["sss", "gjv", "Girls JV", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
+		["sss", "m", "Boys & Girls Middle", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],		
 		["fcs", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
 		["fcs", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
 		["fcs", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
@@ -143,16 +143,15 @@ db.serialize(function() {
 
 ];
 
-	db.run('CREATE TABLE pages (id INTEGER PRIMARY KEY, name TEXT, url TEXT, siteid INTEGER, teamid INTEGER, FOREIGN KEY(siteid) REFERENCES sites(id), FOREIGN KEY(teamid) REFERENCES teams(id))');
-	db.run('CREATE INDEX UXPagesSites ON pages(siteid)');
+	db.run('CREATE TABLE pages (id INTEGER PRIMARY KEY, name TEXT, url TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
 	db.run('CREATE INDEX UXPagesTeams ON pages(teamid)');	
   
-	var stmt = db.prepare('INSERT INTO pages (name, url, siteid, teamid) VALUES (?, ?, ?, ?)');
+	var stmt = db.prepare('INSERT INTO pages (name, url, teamid) VALUES (?, ?, ?)');
   
     for (i = 0; i < dataTeamsPages.length; i += 1) {
 		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsPages[i][0],dataTeamsPages[i][1]], function (error, row) {
 			var currentTeamPages = dataTeamsPages[row['i']];
-			stmt.run(currentTeamPages[2], currentTeamPages[3], row['siteid'], row['teamid'], function (err) {
+			stmt.run(currentTeamPages[2], currentTeamPages[3], row['teamid'], function (err) {
 				if(err) {
 					console.log('Team Pages add error: ' + err);
 				} else {
@@ -163,6 +162,7 @@ db.serialize(function() {
 	};
 
 });
+
 
 
 

@@ -17,7 +17,8 @@ var apiV1 = (function () {
 	var	dbSelectSite = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE id = (?)');
 	var	dbSelectSiteByShorthand = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE shorthand = (?)');
 	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE siteid = (?)');	
-	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');			
+	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
+	var	dbSelectPages = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
 	var	dbInsertSite = db.prepare('INSERT INTO sites (shorthand, name, welcome) VALUES (?, ?, ?)');
 	var	dbUpdateSite = db.prepare('UPDATE sites SET shorthand=?, name=?, welcome=? WHERE id = ?');	
 		
@@ -149,7 +150,26 @@ var apiV1 = (function () {
 		} else {
 			callback(new Error('Missing siteid or teamid'));
 		}
-	};	
+	};
+
+	var fetchPages = function(data, callback) {
+		console.log('api v1: fetchPages');
+		var jsonData = { pages: [] };			
+	
+		if(data) {	
+			dbSelectPages.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.pages.push({ id: row.id, name: row.name, url: row.url });
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};		
 	
 
 	var addSite = function(data, callback) {
@@ -203,6 +223,7 @@ var apiV1 = (function () {
 		serveFromDisk: serveFromDisk,
 		fetchSites: fetchSites,
 		fetchTeams: fetchTeams,
+		fetchPages: fetchPages,
 		addSite: addSite,
 		updateSite: updateSite
 	};
@@ -212,6 +233,7 @@ var apiV1 = (function () {
 //Export functions that are exposed for use by other modules
 exports.fetchSites = apiV1.fetchSites;
 exports.fetchTeams = apiV1.fetchTeams;
+exports.fetchPages = apiV1.fetchPages;
 exports.addSite = apiV1.addSite;
 exports.serveFromDisk = apiV1.serveFromDisk;
 exports.updateSite = apiV1.updateSite;

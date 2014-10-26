@@ -102,6 +102,8 @@ var main = (function () {
 						apiv1.updateSite(data, callback);						
 					} else if (uri === '/api/v1/teams') {
 						apiv1.fetchTeams(data, callback);
+					} else if (uri === '/api/v1/pages') {
+						apiv1.fetchPages(data, callback);						
 					} else {
 						apiv1.serveFromDisk(uri, res);
 					}					
@@ -116,7 +118,7 @@ var main = (function () {
 					res.end(); 
 				} else {
 					//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
-					//response.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});
+					//res.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});
 					res.writeHead(200, {'Content-Type': 'application/json'});	
 					
 					res.write(JSON.stringify(data));

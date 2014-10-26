@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> 
-  <title>Floyd Central Soccer | Schedule</title>	
+  <title></title>	
   <script src="./js/jquery.min.js"></script>
   <script src="./js/data.js?v2"></script>
   <script src="./js/site.js?v2"></script>
-  <script>cache.page.name = 'schedule'</script>
 </head>
 
 <body>
@@ -13,9 +12,10 @@
 
     <div class="jumbotron jumbotron-ad">
       <div class="container">
-        <h1 class="sitename"><script>$('.sitename').html(cache.site.name);</script></h1>
-        <p><a class="sitename" href="index.html"><script>$('.sitename').html(cache.site.name);</script>
-          </a>&nbsp;/&nbsp;<a class="teamname" href="home.html"><script>$('.teamname').html(cache.teams[localStorage.id].name);</script></a></p>
+        <h1 class="sitename"></h1>
+        <p>
+			<a class="sitename" href="index.html"></a>&nbsp;/&nbsp;<a class="teamname" href="home.html"></a>
+		 </p>
       </div>
     </div>  	
 	
@@ -38,31 +38,81 @@
 		</div>
 
     <div class="schedules"></div>
-    <script>
-	(function() {      
-		var html = '';
+	
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {
+		var init = function() {
+			document.title = localStorage.sitename;
+			$('.sitename').html(localStorage.sitename);
+			$('.teamname').html(localStorage.teamname);			
+		
+			fetchPages();
+		};
+	
+		var fetchPages = function() {
+			var html = '';
+			
+			var data = {teamid:localStorage.teamid};
+			$.ajax({ url: 'api/v1/schedule', 
+				dataType: 'json', contentType: 'application/json',
+				type: "POST",
+				data: JSON.stringify(data), 
+				error: function (jqxhr, textStatus, errorThrown) {
+					console.log('error', textStatus, '//', errorThrown);
+				},
+				success: function (data) {
+					//console.log('data: ' + JSON.stringify(data));	
+					
+					$.each(data.pages, function (i, value) {
+						//console.log('value: ' + JSON.stringify(value));
+						html += '<div class="row alert alert-neutral" role="alert">';
+						html  +=  
+						'  <div class="col-sm-2">' +
+						'   <span>'; html+=value.date;html+='</span>' +
+						'   </div>' +
+						'  <div class="col-sm-4">' +
+						'      <span>';html+=value.opponent;html+='</span> ' +           
+						'  </div>' +
+						'  <div class="col-sm-4">' +
+						'      <span>';html+=value.location;html+='</span> ' +           
+						'  </div>' +	        
+						'  <div class="col-sm-2">' +
+						'      <span>';html+=value.score + " " + value.result;html+='</span>' +
+						'  </div>    ' +    
+						'</div> ';
+					});
 
-		$.each(cache.teams[localStorage.id].results, function() {      
-		    html += '<div class="row alert alert-neutral" role="alert">';
-		    html  +=  
-		    '  <div class="col-sm-2">' +
-		    '   <span>'; html+=this.date;html+='</span>' +
-		    '   </div>' +
-		    '  <div class="col-sm-4">' +
-		    '      <span>';html+=this.opponent;html+='</span> ' +           
-		    '  </div>' +
-		    '  <div class="col-sm-4">' +
-		    '      <span>';html+=this.location;html+='</span> ' +           
-		    '  </div>' +	        
-		    '  <div class="col-sm-2">' +
-		    '      <span>';html+=this.score + " " + this.result;html+='</span>' +
-		    '  </div>    ' +    
-		    '</div> ';
-		});
+					$('.schedules').html(html);
+				},
+				fail: function( jqxhr, textStatus, error ) {
+					var err = textStatus + ", " + error;
+					console.log( "Request Failed: " + err );
+					html  +=  '<div class="row">';  					
+					html  +=  
+						'<div class="col-sm-5">' +
+						'    <p>Error getting information.  Refresh and try again.' +
+						'    </p> ' + 
+						'</div>';
+					html += '</div>';
+					$('.teamlist').html(html);	
+				}			
+			});
+		}	
+		
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+		};
 
-		$('.schedules').html(html);
 	})();
-    </script>
+	
+	$(document).ready(function () {
+		page.init();
+
+	});	
+
+</script>	
      
 	<div class="footer"></div>
 </body>
