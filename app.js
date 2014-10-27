@@ -102,10 +102,14 @@ var main = (function () {
 						apiv1.updateSite(data, callback);						
 					} else if (uri === '/api/v1/teams') {
 						apiv1.fetchTeams(data, callback);
+					} else if (uri === '/api/v1/teams/tournament') {
+						apiv1.fetchTeamsTournament(data, callback);						
 					} else if (uri === '/api/v1/pages') {
 						apiv1.fetchPages(data, callback);						
 					} else if (uri === '/api/v1/schedules') {
-						apiv1.fetchSchedules(data, callback);						
+						apiv1.fetchSchedules(data, callback);	
+					} else if (uri === '/api/v1/rosters') {
+						apiv1.fetchRosters(data, callback);						
 					} else {
 						apiv1.serveFromDisk(uri, res);
 					}					

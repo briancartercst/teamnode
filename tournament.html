@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> 
-  <title>Floyd Central Soccer | Tournament</title>  
+  <title></title>  
   <script src="./js/jquery.min.js"></script>
   <script src="./js/data.js?v2"></script>
   <script src="./js/site.js?v2"></script>
-  <script>cache.page.name = 'tournament';</script>
 </head>
 
 <body>
@@ -14,9 +13,8 @@
 
     <div class="jumbotron jumbotron-ad">
       <div class="container">
-        <h1 class="sitename"><script>$('.sitename').html(cache.site.name);</script></h1>
-        <p><a class="sitename" href="index.html"><script>$('.sitename').html(cache.site.name);</script>
-          </a>&nbsp;/&nbsp;<a class="teamname" href="home.html"><script>$('.teamname').html(cache.teams[localStorage.id].name);</script></a></p>
+        <h1 class="sitename"></h1>
+        <p><a class="sitename" href="index.html"></a>&nbsp;/&nbsp;<a class="teamname" href="home.html"></a></p>
       </div>
     </div>     
     
@@ -25,7 +23,6 @@
       <div class="row">
         <div class="col-sm-12" style="min-height:100px;">
             <p class="tournamentjs">
-              <script>$('.tournamentjs').html(cache.teams[localStorage.id].tournamentjs);</script>
             </p>  
         </div>
       </div>
@@ -33,6 +30,67 @@
       <div class="footer"></div>
 
     </div>  <!-- container -->  
+	
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {
+		var init = function() {
+			document.title = localStorage.sitename;
+			$('.sitename').html(localStorage.sitename);
+			$('.teamname').html(localStorage.teamname);			
+		
+			process();
+		};
+	
+		var process = function() {
+			var html = '';
+			
+			var data = {id:localStorage.teamid};
+			$.ajax({ url: 'api/v1/teams/tournament', 
+				dataType: 'json', contentType: 'application/json',
+				type: "POST",
+				data: JSON.stringify(data), 
+				error: function (jqxhr, textStatus, errorThrown) {
+					console.log('error', textStatus, '//', errorThrown);
+				},
+				success: function (data) {
+					//console.log('data: ' + JSON.stringify(data));	
+					
+					$.each(data.results, function (i, value) {
+						console.log('value: ' + JSON.stringify(value));
+						$('.tournamentjs').html(value.tournamentjs);
+					});
+					
+					
+				},
+				fail: function( jqxhr, textStatus, error ) {
+					var err = textStatus + ", " + error;
+					console.log( "Request Failed: " + err );
+					html  +=  '<div class="row">';  					
+					html  +=  
+						'<div class="col-sm-5">' +
+						'    <p>Error getting information.  Refresh and try again.' +
+						'    </p> ' + 
+						'</div>';
+					html += '</div>';
+					$('.roster').html(html);	
+				}			
+			});
+		}	
+		
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+		};
+
+	})();
+	
+	$(document).ready(function () {
+		page.init();
+
+	});	
+</script>
+
 
 </body>
 </html>

@@ -30,7 +30,7 @@ db.run('PRAGMA foreign_keys = ON');
 db.serialize(function() {
 	var dataSites = [
 		["sss", "Sample School Soccer", "Welcome to the Sample School Website.  Choose a team below to get team details."],
-		["fcs", "Floyd Central Soccer", "Welcome to the Highlanders' Website.  Choose a team below to get team details."]		
+		["scs", "Sample Central Soccer", "Welcome to the Sample Central School Website.  Choose a team below to get team details."]		
 	];
 
 	db.run('CREATE TABLE sites ( id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, welcome TEXT )');
@@ -56,28 +56,28 @@ db.serialize(function() {
 //add teams
 db.serialize(function() {
 	var dataTeams = [
-		["sss", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],	
-		["sss", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
-		["sss", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
-		["sss", "gjv", "Girls JV", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
-		["sss", "m", "Boys & Girls Middle", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],		
-		["fcs", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
-		["fcs", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic"],
-		["fcs", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"],
-		["fcs", "gjv", "Girls JV", "#FDF21C", "#282828","John Doe","not.real@notreal.ic"]
+		["sss", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic","<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Boys Soccer State Tournament Sect. 30: Floyd Central<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"],	
+		["sss", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic", "<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Boys Soccer State Tournament Sect. 30: Floyd Central<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"],
+		["sss", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic","<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=ce329d7b-dc40-e411-b4d2-002655e6c45a&ssid=8a56a490-d455-4969-a16a-0fdfc001e119&bracketid=dcc67f6c-6a42-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Girls Soccer State Tournament<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"],
+		["sss", "gjv", "Girls JV", "#FDF21C", "#282828","John Doe","not.real@notreal.ic","<a class=\"maxpreps-widget-link\" data-width=\"1200\" data-height=\"900\" data-type=\"tournament\" data-member-id=\"5c84e3b8-99be-42ac-a048-e011fc2d312e\" data-allow-scrollbar=\"true\" href=\"http:\/\/www.maxpreps.com\/tournament\/view.aspx?tournamentid=ce329d7b-dc40-e411-b4d2-002655e6c45a&ssid=8a56a490-d455-4969-a16a-0fdfc001e119&bracketid=dcc67f6c-6a42-e411-b4d2-002655e6c45a\" >2014-15 IHSAA Class 2A Girls Soccer State Tournament<\/a><script type=\"text\/javascript\" >(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text\/javascript\';mp.async=true;mp.src=\'http:\/\/www.maxpreps.com\/includes\/js\/widget\/widget.compressed.js\';h.appendChild(mp);})(document);<\/script>\r\n"],
+		["sss", "m", "Boys & Girls Middle", "#FDF21C", "#282828","John Doe","not.real@notreal.ic",""],		
+		["scs", "bv", "Boys Varsity", "#31824A", "#ffffff","John Doe","not.real@notreal.ic",""],
+		["scs", "bjv", "Boys JV", "#31824A", "#ffffff","John Doe","not.real@notreal.ic",""],
+		["scs", "gv", "Girls Varsity", "#FDF21C", "#282828","John Doe","not.real@notreal.ic",""],
+		["scs", "gjv", "Girls JV", "#FDF21C", "#282828","John Doe","not.real@notreal.ic",""]
 	];
 
 	//create table, include fk, create index on fk to speed up lookups by siteid
-	db.run('CREATE TABLE teams (id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, background TEXT, fontcolor TEXT, contactname TEXT, contactemail TEXT, siteid INTEGER, FOREIGN KEY(siteid) REFERENCES sites(id))');
+	db.run('CREATE TABLE teams (id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, background TEXT, fontcolor TEXT, contactname TEXT, contactemail TEXT, tournamentjs TEXT, siteid INTEGER, FOREIGN KEY(siteid) REFERENCES sites(id))');
 	db.run('CREATE INDEX UXTeamsSites ON teams(siteid)');
   
-	var stmt = db.prepare('INSERT INTO teams (shorthand, name, background, fontcolor, contactname, contactemail, siteid) VALUES (?,?,?,?,?,?,?)');
+	var stmt = db.prepare('INSERT INTO teams (shorthand, name, background, fontcolor, contactname, contactemail, tournamentjs, siteid) VALUES (?,?,?,?,?,?,?,?)');
   
     for (i = 0; i < dataTeams.length; i += 1) {
 		//include i since stmt.run is async and i will update faster than stmts complete
 		db.get("SELECT id as siteid, " + i + " as i FROM sites WHERE shorthand=? LIMIT 1", [dataTeams[i][0]], function (error, row) {
 			var currentTeam = dataTeams[row['i']];
-			stmt.run(currentTeam[1], currentTeam[2], currentTeam[3], currentTeam[4], currentTeam[5], currentTeam[6], row['siteid'], function (err) {
+			stmt.run(currentTeam[1], currentTeam[2], currentTeam[3], currentTeam[4], currentTeam[5], currentTeam[6],currentTeam[7], row['siteid'], function (err) {
 				if(err) {
 					console.log('Team add error: ' + err);
 				} else {
@@ -116,30 +116,26 @@ db.serialize(function() {
 		["sss", "m", "Roster", "roster.html"],	
 		["sss", "m", "News", "news.html"],	
 		["sss", "m", "Coaches", "coaches.html"],
-		["fcs", "bv", "Schedule", "schedule.html"],	
-		["fcs", "bv", "Roster", "roster.html"],	
-		["fcs", "bv", "Tournament", "tournament.html"],	
-		["fcs", "bv", "Photos", "photos.html"],	
-		["fcs", "bv", "News", "news.html"],	
-		["fcs", "bv", "Coaches", "coaches.html"],		
-		["fcs", "bjv", "Schedule", "schedule.html"],	
-		["fcs", "bjv", "Roster", "roster.html"],	
-		["fcs", "bjv", "Tournament", "tournament.html"],	
-		["fcs", "bjv", "Photos", "photos.html"],	
-		["fcs", "bjv", "News", "news.html"],	
-		["fcs", "bjv", "Coaches", "coaches.html"],		
-		["fcs", "gv", "Schedule", "schedule.html"],	
-		["fcs", "gv", "Roster", "roster.html"],	
-		["fcs", "gv", "Tournament", "tournament.html"],	
-		["fcs", "gv", "Photos", "photos.html"],	
-		["fcs", "gv", "News", "news.html"],	
-		["fcs", "gv", "Coaches", "coaches.html"],		
-		["fcs", "gjv", "Schedule", "schedule.html"],	
-		["fcs", "gjv", "Roster", "roster.html"],	
-		["fcs", "gjv", "Tournament", "tournament.html"],	
-		["fcs", "gjv", "Photos", "photos.html"],	
-		["fcs", "gjv", "News", "news.html"],	
-		["fcs", "gjv", "Coaches", "coaches.html"],		
+		["scs", "bv", "Schedule", "schedule.html"],	
+		["scs", "bv", "Roster", "roster.html"],	
+		["scs", "bv", "Photos", "photos.html"],	
+		["scs", "bv", "News", "news.html"],	
+		["scs", "bv", "Coaches", "coaches.html"],		
+		["scs", "bjv", "Schedule", "schedule.html"],	
+		["scs", "bjv", "Roster", "roster.html"],
+		["scs", "bjv", "Photos", "photos.html"],	
+		["scs", "bjv", "News", "news.html"],	
+		["scs", "bjv", "Coaches", "coaches.html"],		
+		["scs", "gv", "Schedule", "schedule.html"],	
+		["scs", "gv", "Roster", "roster.html"],	
+		["scs", "gv", "Photos", "photos.html"],	
+		["scs", "gv", "News", "news.html"],	
+		["scs", "gv", "Coaches", "coaches.html"],		
+		["scs", "gjv", "Schedule", "schedule.html"],	
+		["scs", "gjv", "Roster", "roster.html"],	
+		["scs", "gjv", "Photos", "photos.html"],	
+		["scs", "gjv", "News", "news.html"],	
+		["scs", "gjv", "Coaches", "coaches.html"],		
 
 ];
 
@@ -176,7 +172,7 @@ db.serialize(function() {
 ];
 
 	db.run('CREATE TABLE schedules (id INTEGER PRIMARY KEY, date TEXT, time TEXT, opponent TEXT, location TEXT, score TEXT, result INTEGER, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
-	db.run('CREATE INDEX UXSchedulesTeams ON pages(teamid)');	
+	db.run('CREATE INDEX UXSchedulesTeams ON schedules(teamid)');	
   
 	var stmt = db.prepare('INSERT INTO schedules (date, time, opponent, location, score, result, teamid) VALUES (?, ?, ?, ?, ?, ?, ?)');
   
@@ -194,6 +190,78 @@ db.serialize(function() {
 	};
 
 });
+
+
+//add team roster
+db.serialize(function() {
+	var dataTeamsRoster = [
+		["sss", "bv", "David", "Doe", "GK", "Sr", "0"],
+		["sss", "bv", "Parker", "Mack", "GK", "Jr", "1"],
+		["sss", "bv", "Jacob", "Boston", "D", "Jr", "3"],
+		["sss", "bv", "Sean", "Zany", "D", "Jr", "4"],
+		["sss", "bv", "Alex", "Temple", "D", "Jr", "6"],
+		["sss", "bv", "Henok", "Wise", "FORW", "Sr", "7"],
+		["sss", "bv", "Tyler", "Siny", "MF", "Sr", "10"],
+		["sss", "bv", "Brody", "Mack", "MF", "So", "12"],
+		["sss", "bv", "Evan", "Bendoya", "D", "So", "13"],
+		["sss", "bv", "Matthew", "Moffet", "D", "Sr", "13"],
+		["sss", "bv", "Ethan", "Taylor", "FORW", "So", "15"],
+		["sss", "bv", "Landon", "McDonald", "MF", "So", "16"],
+		["sss", "bv", "Parker", "Vendor", "Sr", "Jr", "17"],
+		["sss", "bv", "Evan", "Sone", "D", "Jr", "18"],
+		["sss", "bv", "Logan", "Kone", "MF", "Sr", "19"],
+		["sss", "bv", "Hunter", "Cane", "D", "Sr", "20"],
+		["sss", "bv", "Hasaan", "Bane", "D", "Sr", "22"],
+		["sss", "bv", "Tyler", "Mane", "MF", "Sr", "23"],
+		["sss", "bv", "Keaton", "Dane", "MF", "So", "25"],
+		["sss", "bjv", "Tyler ", "Fane", "", "", "1"],
+		["sss", "bjv", "Max ", "Lane", "", "", "2"],
+		["sss", "bjv", "Evan ", "Sane", "", "", "3"],
+		["sss", "bjv", "Evan", "Wane", "", "", "4"],
+		["sss", "bjv", "Trey", "Kane", "", "", "5"],
+		["sss", "bjv", "David", "Kain", "", "", "6"],
+		["sss", "bjv", "John", "Tain", "", "", "7"],
+		["sss", "bjv", "Will", "Wayne", "", "", "8"],
+		["sss", "bjv", "Jacob", "Sane", "", "", "9"],
+		["sss", "bjv", "Nikolas", "Vain", "", "", "10"],
+		["sss", "bjv", "Brad", "Main", "", "", "11"],
+		["sss", "bjv", "Braden", "Dane", "", "", "12"],
+		["sss", "bjv", "Sam", "Pain", "", "", "13"],
+		["sss", "bjv", "Connor", "Send", "", "", "14"],
+		["sss", "bjv", "Brandon", "Mei", "", "", "15"],
+		["sss", "bjv", "Landon", "Toll", "", "", "16"],
+		["sss", "bjv", "Jordan", "Monsu", "", "", "17"],
+		["sss", "bjv", "Jordan", "Dinner", "", "", "18"],
+		["sss", "bjv", "Jacob", "Vain", "", "", "19"],
+		["sss", "bjv", "Jason", "Wales", "", "", "20"],
+		["sss", "bjv", "Jacob", "Kail", "", "", "21"],
+		["sss", "bjv", "Garrison", "Cater", "", "", "22"],
+		["sss", "bjv", "Jordan", "Bater", "", "", "23"],
+		["sss", "bjv", "Ethan", "Matter", "", "", "24"],
+		["sss", "bjv", "Keaton", "Satter", "", "", "25"],
+		["sss", "bjv", "Landon", "Falter", "", "", "26"],		
+];
+
+	db.run('CREATE TABLE rosters (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, position TEXT, grade TEXT, jersey TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
+	db.run('CREATE INDEX UXRostersTeams ON rosters(teamid)');	
+  
+	var stmt = db.prepare('INSERT INTO rosters (firstname, lastname, position, grade, jersey, teamid) VALUES (?, ?, ?, ?, ?, ?)');
+  
+    for (i = 0; i < dataTeamsRoster.length; i += 1) {
+		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsRoster[i][0],dataTeamsRoster[i][1]], function (error, row) {
+			var current = dataTeamsRoster[row['i']];
+			stmt.run(current[2], current[3], current[4], current[5], current[6], row['teamid'], function (err) {
+				if(err) {
+					console.log('Team Roster add error: ' + err);
+				} else {
+					console.log('Team Roster Add: ' + current[1] + '-' + current[2]);
+				}
+			});
+		});		
+	};
+
+});
+
 
 
 
