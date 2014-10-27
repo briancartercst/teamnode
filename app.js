@@ -124,8 +124,8 @@ var main = (function () {
 					res.end(); 
 				} else {
 					//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
-					//res.writeHead(200, {'Content-Type': 'application/json',"Cache-Control": "public, max-age=600, s-maxage=3600"});
-					res.writeHead(200, {'Content-Type': 'application/json'});	
+					res.writeHead(200, {'Content-Type': 'application/json', "Cache-Control": "public, max-age=600, s-maxage=3600"});
+					//res.writeHead(200, {'Content-Type': 'application/json'});	
 					
 					res.write(JSON.stringify(data));
 					res.end();

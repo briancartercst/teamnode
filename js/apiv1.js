@@ -32,16 +32,34 @@ var apiV1 = (function () {
 	var msgBadRequest = '{"error": "bad request"}';
 	
 	var serveFromDisk = function(filename, response) {
-		var pathname = path.join(process.cwd(), unescape(filename));
+		var pathname;
 		var stats, extension, mimeType, fileStream;		
+
 		
 		try {
+			pathname = path.join(process.cwd(), unescape(filename));		
+			extension = path.extname(pathname).substr(1);
+			//console.log('filename: ' + filename);
+			//console.log('extension: ' + extension);
+			
+			if(extension == null || extension == '') {
+				extension = 'html';
+				pathname += '.html';
+			}
+
+			mimeType = mimeTypes[extension] || 'application/octet-stream';
 			stats = fs.lstatSync(pathname); // throws error if path doesn't exist
 		} catch (e) {
-			response.writeHead(404, {'Content-Type': 'text/plain'});
-			response.write('404 Not Found\n');
-			response.end();
-			return;
+			try {
+				//remove .html, might be a directory
+				pathname = pathname.slice(0,-5)
+				stats = fs.lstatSync(pathname); // throws error if path doesn't exist	
+			} catch (e) {
+				response.writeHead(404, {'Content-Type': 'text/plain'});
+				response.write('404 Not Found\n');
+				response.end();
+				return;
+			}
 		}
 
 		if (stats.isFile()) {
@@ -55,16 +73,14 @@ var apiV1 = (function () {
 			response.writeHead(500, {'Content-Type': 'text/plain'});
 			response.write('500 Internal server error\n');
 			response.end();
-		}	
-	 
-		extension = path.extname(pathname).substr(1);
-		mimeType = mimeTypes[extension] || 'application/octet-stream';
+		}	 
+
 
 		console.log('serving ' + filename + ' as ' + mimeType);
 		
 		//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
-		//response.writeHead(200, {'Content-Type': mimeType,"Cache-Control": "public, max-age=600, s-maxage=3600"});			
-		response.writeHead(200, {'Content-Type': mimeType});
+		response.writeHead(200, {'Content-Type': mimeType,"Cache-Control": "public, max-age=600, s-maxage=3600"});			
+		//response.writeHead(200, {'Content-Type': mimeType});
 		
 		fileStream = fs.createReadStream(pathname);
 		fileStream.pipe(response);

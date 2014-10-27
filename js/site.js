@@ -48,7 +48,7 @@ function header() {
 		'        <span class="sr-only">Toggle navigation</span>' +
 		'        <i class="fa fa-bars fa-lg"></i>' +
 		'      </button>' +
-		'      <a class="navbar-brand" href="index.html">';html+=localStorage.sitename;html+='</a>' +
+		'      <a class="navbar-brand" href="/">';html+=localStorage.sitename;html+='</a>' +
 		'    </div>' +
 		'    <div class="navbar-collapse collapse" style="height: 1px;">' +
 		'      <ul class="nav navbar-nav">' +
