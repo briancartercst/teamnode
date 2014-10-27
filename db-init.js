@@ -150,12 +150,44 @@ db.serialize(function() {
   
     for (i = 0; i < dataTeamsPages.length; i += 1) {
 		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsPages[i][0],dataTeamsPages[i][1]], function (error, row) {
-			var currentTeamPages = dataTeamsPages[row['i']];
-			stmt.run(currentTeamPages[2], currentTeamPages[3], row['teamid'], function (err) {
+			var current = dataTeamsPages[row['i']];
+			stmt.run(current[2], current[3], row['teamid'], function (err) {
 				if(err) {
 					console.log('Team Pages add error: ' + err);
 				} else {
-					console.log('Team Pages Add: ' + currentTeamPages[1] + '-' + currentTeamPages[2]);
+					console.log('Team Pages Add: ' + current[1] + '-' + current[2]);
+				}
+			});
+		});		
+	};
+
+});
+
+
+//add team schedule
+db.serialize(function() {
+	var dataTeamsSchedule = [
+		["sss", "bv", "08/18/14", "5:30p", "Bears", "Seagulls main field", "3-0", 1],	
+		["sss", "bv", "08/25/14", "5:30p", "Cats", "Cats main field", "3-0", 1],	
+		["sss", "bv", "09/01/14", "5:30p", "Eagles", "Eagles School main field", "3-0", 1],	
+		["sss", "bjv", "08/18/14", "5:30p", "Bears", "Seagulls main field", "3-0", 1],	
+		["sss", "bjv", "08/25/14", "5:30p", "Cats", "Cats main field", "3-0", 1],	
+		["sss", "bjv", "09/01/14", "5:30p", "Eagles", "Eagles main field", "3-0", 1],	
+];
+
+	db.run('CREATE TABLE schedules (id INTEGER PRIMARY KEY, date TEXT, time TEXT, opponent TEXT, location TEXT, score TEXT, result INTEGER, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
+	db.run('CREATE INDEX UXSchedulesTeams ON pages(teamid)');	
+  
+	var stmt = db.prepare('INSERT INTO schedules (date, time, opponent, location, score, result, teamid) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  
+    for (i = 0; i < dataTeamsSchedule.length; i += 1) {
+		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsSchedule[i][0],dataTeamsSchedule[i][1]], function (error, row) {
+			var current = dataTeamsSchedule[row['i']];
+			stmt.run(current[2], current[3], current[4], current[5], current[6], current[7], row['teamid'], function (err) {
+				if(err) {
+					console.log('Team Schedule add error: ' + err);
+				} else {
+					console.log('Team Schedule Add: ' + current[1] + '-' + current[2]);
 				}
 			});
 		});		

@@ -104,6 +104,8 @@ var main = (function () {
 						apiv1.fetchTeams(data, callback);
 					} else if (uri === '/api/v1/pages') {
 						apiv1.fetchPages(data, callback);						
+					} else if (uri === '/api/v1/schedules') {
+						apiv1.fetchSchedules(data, callback);						
 					} else {
 						apiv1.serveFromDisk(uri, res);
 					}					

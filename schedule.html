@@ -47,14 +47,14 @@
 			$('.sitename').html(localStorage.sitename);
 			$('.teamname').html(localStorage.teamname);			
 		
-			fetchPages();
+			process();
 		};
 	
-		var fetchPages = function() {
+		var process = function() {
 			var html = '';
 			
 			var data = {teamid:localStorage.teamid};
-			$.ajax({ url: 'api/v1/schedule', 
+			$.ajax({ url: 'api/v1/schedules', 
 				dataType: 'json', contentType: 'application/json',
 				type: "POST",
 				data: JSON.stringify(data), 
@@ -64,12 +64,12 @@
 				success: function (data) {
 					//console.log('data: ' + JSON.stringify(data));	
 					
-					$.each(data.pages, function (i, value) {
+					$.each(data.results, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
 						html += '<div class="row alert alert-neutral" role="alert">';
 						html  +=  
 						'  <div class="col-sm-2">' +
-						'   <span>'; html+=value.date;html+='</span>' +
+						'   <span>'; html+=value.date + ' ' + value.time;html+='</span>' +
 						'   </div>' +
 						'  <div class="col-sm-4">' +
 						'      <span>';html+=value.opponent;html+='</span> ' +           

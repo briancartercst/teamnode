@@ -13,12 +13,15 @@ var apiV1 = (function () {
 	var	db = new sqlite3.Database('teamnode.db');
 	
 	var	dbLastInsertId = db.prepare('SELECT last_insert_rowid() as id');	
+	
 	var	dbSelectSites = db.prepare('SELECT id, shorthand, name, welcome FROM sites');
 	var	dbSelectSite = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE id = (?)');
 	var	dbSelectSiteByShorthand = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE shorthand = (?)');
 	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE siteid = (?)');	
 	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
 	var	dbSelectPages = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
+    var	dbSelectSchedules = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');	
+	
 	var	dbInsertSite = db.prepare('INSERT INTO sites (shorthand, name, welcome) VALUES (?, ?, ?)');
 	var	dbUpdateSite = db.prepare('UPDATE sites SET shorthand=?, name=?, welcome=? WHERE id = ?');	
 		
@@ -169,7 +172,26 @@ var apiV1 = (function () {
 		} else {
 			callback(new Error('Missing teamid'));
 		}
-	};		
+	};	
+
+	var fetchSchedules = function(data, callback) {
+		console.log('api v1: fetchSchedules');
+		var jsonData = { results: [] };			
+	
+		if(data) {	
+			dbSelectSchedules.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.results.push({ id: row.id, date: row.date, time: row.time, opponent: row.opponent, location: row.location, score: row.score, result: row.result});
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};			
 	
 
 	var addSite = function(data, callback) {
@@ -224,6 +246,7 @@ var apiV1 = (function () {
 		fetchSites: fetchSites,
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
+		fetchSchedules: fetchSchedules,
 		addSite: addSite,
 		updateSite: updateSite
 	};
@@ -234,6 +257,7 @@ var apiV1 = (function () {
 exports.fetchSites = apiV1.fetchSites;
 exports.fetchTeams = apiV1.fetchTeams;
 exports.fetchPages = apiV1.fetchPages;
+exports.fetchSchedules = apiV1.fetchSchedules;
 exports.addSite = apiV1.addSite;
 exports.serveFromDisk = apiV1.serveFromDisk;
 exports.updateSite = apiV1.updateSite;
