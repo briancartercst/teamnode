@@ -1,3 +1,8 @@
+
+# Hello Amber!  You have just Been Forked
+- [Check This Out] (http://www.linkedin.com/pub/amber-wash/38/838/783)
+- [How about this?] (http://pngimg.com/upload/fork_PNG3064.png)
+
 # teamnode
 This is a website for teams.  Framework is using html, css, js, and node.js.  The database is Sqlite3.
 
