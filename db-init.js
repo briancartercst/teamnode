@@ -191,6 +191,36 @@ db.serialize(function() {
 
 });
 
+//add team coaches
+db.serialize(function() {
+	var dataTeamsCoaches = [
+		["sss", "bv", "Henry", "Kersting", "hkersting@appriss.com", "5022762094"],	
+		["sss", "gv", "Gene", "Redmond", "hkersting@appriss.com", "5022762094"],
+		["sss", "bjv", "Amber", "Wash", "hkersting@appriss.com", "5022762094"],
+		["sss", "gjv", "Brian", "Carter", "hkersting@appriss.com", "5022762094"],
+];
+
+	db.run('CREATE TABLE coaches (id INTEGER PRIMARY KEY, first TEXT, last TEXT, email TEXT, phone TEXT)');
+	//db.run('CREATE INDEX UXCoachesTeams ON coaches(teamid)');	
+  
+	var stmt = db.prepare('INSERT INTO coaches (first, last, email, phone) VALUES (?, ?, ?, ?)');
+  
+    for (i = 0; i < dataTeamsCoaches.length; i += 1) {
+		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsCoaches[i][0],dataTeamsCoaches[i][1]], function (error, row)
+		{
+			var current = dataTeamsCoaches[row['i']];
+			stmt.run(current[2], current[3], current[4], current[5], function (err) {
+				if(err) {
+					console.log('Team Coach add error: ' + err);
+				} else {
+					console.log('Team Coach Add: ' + current[1] + '-' + current[2]);
+				}
+			});
+		});		
+	};
+
+});
+
 
 //add team roster
 db.serialize(function() {
