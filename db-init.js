@@ -266,4 +266,37 @@ db.serialize(function() {
 
 
 
+//add team news
+db.serialize(function() {
+	var dataTeamsNews = [
+		["sss", "bv", "news title 1", "first new content 1", "2016/04/07", ],
+["sss", "bv", "news title 2", "first new content 2", "2014/03/02"],
+["sss", "bv", "news title 3", "first new content 3", "2015/11/05"],
+["sss", "bv", "news title 4", "first new content 4", "2014/08/04"],
+];
+
+	db.run('CREATE TABLE news (id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
+	db.run('CREATE INDEX IXNewsTeams ON news(teamid)');	
+  
+	var stmt = db.prepare('INSERT INTO news (title, content, date, teamid) VALUES (?, ?, ?, ?)');
+  
+    for (i = 0; i < dataTeamsNews.length; i += 1) {
+		db.get("SELECT " + i + " as i, sites.id as siteid, teams.id as teamid FROM sites JOIN teams on sites.id = teams.siteid WHERE sites.shorthand=? AND teams.shorthand=? LIMIT 1", [dataTeamsNews[i][0],dataTeamsNews[i][1]], function (error, row) {
+			var current = dataTeamsNews[row['i']];
+			stmt.run(current[2], current[3], current[4], row['teamid'], function (err) {
+				if(err) {
+					console.log('Team News add error: ' + err);
+				} else {
+					console.log('Team News Add: ' + current[1] + '-' + current[2]);
+				}
+			});
+		});		
+	};
+
+});
+
+
+
+
+
 
