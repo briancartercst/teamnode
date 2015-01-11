@@ -34,7 +34,7 @@
 		var init = function() {
 			var data = {"id":"1"};
 			
-			$.ajax({ url: 'api/v1/sites', 
+			$.ajax({ url: 'api/v1/info', 
 				dataType: 'json', contentType: 'application/json',
 				type: "POST",
 				data: JSON.stringify(data), 
@@ -44,17 +44,14 @@
 				success: function (data) {
 					//console.log('data: ' + JSON.stringify(data));				
 					
-					$.each(data.sites, function (i, value) {
-						//console.log('value: ' + JSON.stringify(value));
-						localStorage.siteid = value.id;
-						localStorage.siteshorthand = value.shorthand;
-						localStorage.sitename = value.name;
-						localStorage.sitewelcome = value.welcome;
+					$.each(data.info, function (i, value) {
+						//console.log('local storage value: ' + JSON.stringify(value));
+						localStorage[value.category + value.key] = value["value"];
 					});	
 
-					document.title = localStorage.sitename;
-					 $('.sitename').html(localStorage.sitename);
-					 $('.lead').html(localStorage.sitewelcome);					
+					document.title = localStorage["site" + "name"];
+					 $('.sitename').html(localStorage["site" + "name"]);
+					 $('.lead').html(localStorage["site" + "welcome"]);					
 					fetchTeams();
 				},
 				fail: function( jqxhr, textStatus, error ) {
@@ -75,7 +72,7 @@
 			var html = '';
 			html  +=  '<div class="row">'; 
 			
-			var data = {siteid:localStorage.siteid};
+			var data = {};
 			$.ajax({ url: 'api/v1/teams', 
 				dataType: 'json', contentType: 'application/json',
 				type: "POST",

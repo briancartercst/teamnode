@@ -13,21 +13,15 @@ var apiV1 = (function () {
 	var	db = new sqlite3.Database('teamnode.db');
 	
 	var	dbLastInsertId = db.prepare('SELECT last_insert_rowid() as id');	
-	
-	var	dbSelectSites = db.prepare('SELECT id, shorthand, name, welcome FROM sites');
-	var	dbSelectSite = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE id = (?)');
-	var	dbSelectSiteByShorthand = db.prepare('SELECT id, shorthand, name, welcome FROM sites WHERE shorthand = (?)');
-	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE siteid = (?)');	
-	var	dbSelectTeamsTournament = db.prepare('SELECT id, tournamentjs FROM teams WHERE id = (?)');	
+
+	var	dbSelectInfo = db.prepare('SELECT id, category, key, value FROM info');
+	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams');	
 	
 	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
 	var	dbSelectPages = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
     var	dbSelectSchedules = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');
 	var	dbSelectRosters = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
 	
-	var	dbInsertSite = db.prepare('INSERT INTO sites (shorthand, name, welcome) VALUES (?, ?, ?)');
-	var	dbUpdateSite = db.prepare('UPDATE sites SET shorthand=?, name=?, welcome=? WHERE id = ?');	
-		
 	var msgMissingParms = '{"error": "missing parameters: ';
 	var msgBadRequest = '{"error": "bad request"}';
 	
@@ -39,9 +33,7 @@ var apiV1 = (function () {
 		try {
 			pathname = path.join(process.cwd(), unescape(filename));		
 			extension = path.extname(pathname).substr(1);
-			//console.log('filename: ' + filename);
-			//console.log('extension: ' + extension);
-			
+		
 			if(extension == null || extension == '') {
 				extension = 'html';
 				pathname += '.html';
@@ -96,107 +88,37 @@ var apiV1 = (function () {
 		});	
 	};
 
-	var fetchSites = function(data, callback) {
-		console.log('api v1: fetchSites');
-		var jsonData = { sites: [] };			
+	var fetchInfo = function(data, callback) {
+		console.log('api v1: fetchInfo');
+		var jsonData = { info: [] };			
 	
-		if(data) {	
-			if( data.id) {
-				dbSelectSite.each([data.id],function (err, row) {
-					if(err) {
-						callback(err);
-					} else {
-						jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
-					}
-				}, function () {
-					callback(null,jsonData);
-				});
+		dbSelectInfo.each(function (err, row) {
+			if(err) {
+				callback(err);
 			} else {
-				if(data.shorthand) {
-					dbSelectSiteByShorthand.each([data.shorthand],function (err, row) {
-						if(err) {
-							callback(err);
-						} else {
-							jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
-						}
-					}, function () {
-						callback(null,jsonData);
-					});			
-				} else {
-					callback(new Error('Missing id or shorthand'));				
-				}
-			}
-		} else {		
-			dbSelectSites.each(function (err, row) {
-				if(err) {
-					callback(err);
-				} else {
-					jsonData.sites.push({ id: row.id, shorthand: row.shorthand, name: row.name, welcome: row.welcome });
-				}	
-			}, function () {
-				callback(null,jsonData);
-			});	
-		}
+				jsonData.info.push({ id: row.id, category: row.category, key: row.key, value: row.value });
+			}	
+		}, function () {
+			callback(null,jsonData);
+		});	
+
 	};	
 
 	var fetchTeams = function(data, callback) {
 		console.log('api v1: fetchTeams');
 		var jsonData = { teams: [] };			
 	
-		if(data) {	
-			if(data.siteid) {
-				dbSelectTeams.each([data.siteid],function (err, row) {
-					if(err) {
-						callback(err);
-					} else {
-						jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
-					}
-				}, function () {
-					callback(null,jsonData);
-				});	
-			} else { 
-				if(data.id) {			
-					dbSelectTeam.each([data.id],function (err, row) {
-						if(err) {
-							callback(err);
-						} else {
-							jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
-						}
-					}, function () {
-						callback(null,jsonData);
-					});
-				} else {
-						callback(new Error('Missing siteid'));
-				}
-			}
-		} else {
-			callback(new Error('Missing siteid or teamid'));
-		}
+		dbSelectTeams.each(function (err, row) {
+			if(err) {
+				callback(err);
+			} else {
+				jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+			}	
+		}, function () {
+			callback(null,jsonData);
+		});	
 	};
 	
-	var fetchTeamsTournament = function(data, callback) {
-		console.log('api v1: fetchTeams');
-		var jsonData = { results: [] };			
-	
-		if(data) {	
-			if(data.id) {			
-				dbSelectTeamsTournament.each([data.id],function (err, row) {
-					if(err) {
-						callback(err);
-					} else {
-						jsonData.results.push({ id: row.id, tournamentjs: row.tournamentjs });
-					}
-				}, function () {
-					callback(null,jsonData);
-				});
-			} else {
-					callback(new Error('Missing teamid'));
-			}
-		} else {
-			callback(new Error('Missing siteid or teamid'));
-		}
-	};	
-
 	var fetchPages = function(data, callback) {
 		console.log('api v1: fetchPages');
 		var jsonData = { pages: [] };			
@@ -254,77 +176,25 @@ var apiV1 = (function () {
 		}
 	};		
 	
-
-	var addSite = function(data, callback) {
-		console.log('api v1: addSite');
-	
-		if(data) {	
-			dbInsertSite.run(data.shorthand, data.name, data.welcome, function (err) {
-				if(err) {
-					callback(err);
-				} else {
-					fetchLastInsertId(function (err, row) {
-						if(err) {
-							callback(err);
-						} else {
-							callback(null,row);
-						}
-					});
-				}
-			});
-		} else {
-			callback(new Error('Missing data'));
-		}
-	};
-	
-	var updateSite = function(data, callback) {
-		console.log('api v1: updateSite');
-		
-		console.log('data: ' + JSON.stringify(data));
-	
-		if(data) {	
-			dbUpdateSite.run(data.shorthand, data.name, data.welcome, data.id, function (err) {
-				if(err) {
-					callback(err);
-				} else {
-					fetchSites({id: data.id}, function (err, row) {
-						if(err) {
-							callback(err);
-						} else {
-							callback(null,row);
-						}
-					});
-				}
-			});
-		} else {
-			callback(new Error('Missing data'));
-		}
-	};	
  
 	//Expose methods as public
 	return {
 		serveFromDisk: serveFromDisk,
-		fetchSites: fetchSites,
+		fetchInfo: fetchInfo,
 		fetchTeams: fetchTeams,
-		fetchTeamsTournament: fetchTeamsTournament,
 		fetchPages: fetchPages,
 		fetchSchedules: fetchSchedules,		
 		fetchRosters: fetchRosters,		
-		addSite: addSite,
-		updateSite: updateSite
 	};
 	
 })();
 
 //Export functions that are exposed for use by other modules
-exports.fetchSites = apiV1.fetchSites;
+exports.fetchInfo = apiV1.fetchInfo;
 exports.fetchTeams = apiV1.fetchTeams;
-exports.fetchTeamsTournament = apiV1.fetchTeamsTournament;
 exports.fetchPages = apiV1.fetchPages;
 exports.fetchSchedules = apiV1.fetchSchedules;
 exports.fetchRosters = apiV1.fetchRosters;
-exports.addSite = apiV1.addSite;
 exports.serveFromDisk = apiV1.serveFromDisk;
-exports.updateSite = apiV1.updateSite;
 
 

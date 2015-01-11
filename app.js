@@ -94,16 +94,10 @@ var main = (function () {
 					var uri;
 					uri = url.parse(req.url).pathname;
 
-					if (uri === '/api/v1/sites') {
-						apiv1.fetchSites(data, callback);
-					} else if (uri === '/api/v1/sites/add') {
-						apiv1.addSite(data, callback);	
-					} else if (uri === '/api/v1/sites/update') {
-						apiv1.updateSite(data, callback);						
+					if (uri === '/api/v1/info') {
+						apiv1.fetchInfo(data, callback);
 					} else if (uri === '/api/v1/teams') {
 						apiv1.fetchTeams(data, callback);
-					} else if (uri === '/api/v1/teams/tournament') {
-						apiv1.fetchTeamsTournament(data, callback);						
 					} else if (uri === '/api/v1/pages') {
 						apiv1.fetchPages(data, callback);						
 					} else if (uri === '/api/v1/schedules') {

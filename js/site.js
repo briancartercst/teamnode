@@ -66,11 +66,11 @@ function header() {
 				console.log('error', textStatus, '//', errorThrown);
 			},
 			success: function (data) {
-				//console.log('data: ' + JSON.stringify(data));	
+				console.log('data: ' + JSON.stringify(data));	
 				var html = '';
 				$.each(data.pages, function (i, value) {
-					//console.log('value: ' + JSON.stringify(value));
-					html  += '        <li '; if(cache.page.name=='home'){html +='class="active"'}; html+='><a href="'+ value.url +'">'+ value.name +'</a></li>';
+					console.log('value: ' + JSON.stringify(value));
+					html  += '        <li><a href="'+ value.url +'">'+ value.name +'</a></li>';
 				});
 
 				$('.nav').html(html);
