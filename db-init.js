@@ -62,7 +62,7 @@ db.serialize(function() {
 		db.run('CREATE TABLE info (id INTEGER PRIMARY KEY, category TEXT, key TEXT, value TEXT)');
 		
 		console.log("-- teams started");
-		db.run('CREATE TABLE teams (id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, background TEXT, fontcolor TEXT, contactname TEXT, contactemail TEXT)');
+		db.run('CREATE TABLE teams (id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, background TEXT, fontcolor TEXT, contactname TEXT, contactemail TEXT, listbackground TEXT, listfontcolor TEXT)');
 		
 		console.log("-- pages started");
 		db.run('CREATE TABLE pages (id INTEGER PRIMARY KEY, name TEXT, url TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
@@ -112,18 +112,18 @@ db.serialize(function() {
 		console.log("Insert teams started");
 		
 		var dataTeams = [
-			["bv", "Boys Varsity Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic"],	
-			["bjv", "Boys JV Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic"],
-			["gv", "Girls Varsity Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic"],
-			["gjv", "Girls JV Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic"]
+			["bv", "Boys Varsity Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic", "#ffffff", "#000000"],	
+			["bjv", "Boys JV Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic", "#ffffff", "#000000"],
+			["gv", "Girls Varsity Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic", "#ffffff", "#000000"],
+			["gjv", "Girls JV Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic", "#ffffff", "#000000"]
 		];
 
-		var stmt = db.prepare('INSERT INTO teams (shorthand, name, background, fontcolor, contactname, contactemail) VALUES (?,?,?,?,?,?)');
+		var stmt = db.prepare('INSERT INTO teams (shorthand, name, background, fontcolor, contactname, contactemail, listbackground, listfontcolor) VALUES (?,?,?,?,?,?,?,?)');
 	 
 		for (i = 0; i < dataTeams.length; i += 1) {
 			db.get('SELECT ' + i + ' as i', [], function (error, row) {
 				var current = dataTeams[row['i']];
-				stmt.run(current[0],current[1],current[2],current[3],current[4],current[5], function (err) {
+				stmt.run(current[0],current[1],current[2],current[3],current[4],current[5],current[6],current[7], function (err) {
 					if(err) {
 						console.log('Teams add error: ' + err);
 					} else {

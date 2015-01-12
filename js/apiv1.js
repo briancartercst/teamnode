@@ -90,13 +90,14 @@ var apiV1 = (function () {
 
 	var fetchInfo = function(data, callback) {
 		console.log('api v1: fetchInfo');
-		var jsonData = { info: [] };			
+		var jsonData = {};			
 	
 		dbSelectInfo.each(function (err, row) {
 			if(err) {
 				callback(err);
 			} else {
-				jsonData.info.push({ id: row.id, category: row.category, key: row.key, value: row.value });
+				var key = row.category + row.key;
+				jsonData[key] = row.value;
 			}	
 		}, function () {
 			callback(null,jsonData);

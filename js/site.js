@@ -1,7 +1,9 @@
 //define global config and variables
 var config;
+var teamnode = {};
 
 init();
+
 
 $( document ).ready(function() {
 	$('.header').html(header());
@@ -14,8 +16,58 @@ function init() {
 	logoImage = new Image();
 	logoImage.src = "./img/logo.png";
 	
+	initInfo();
+	
 	$('head').append(headElement());
 }
+
+function initInfo() {
+	console.log("in initinfo");
+	if(localStorage.sitename == null)
+	{
+		var data = {};
+		$.ajax({ url: 'api/v1/info', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			data: JSON.stringify(data),
+			cache: true,
+			error: function (jqxhr, textStatus, errorThrown) {
+				console.log('error', textStatus, '//', errorThrown);
+			},
+			success: function (data) {
+				//console.log('data: ' + JSON.stringify(data));				
+				teamnode["info"] = data;
+			},
+			fail: function( jqxhr, textStatus, error ) {
+				var err = textStatus + ", " + error;
+				console.log( "Request Failed: " + err );
+			}			
+		});
+	}
+	
+	var teamid = getQueryVariable("teamid");
+	//console.log("teamid: " + teamid);
+	if(teamid != null)
+	{
+		if(teamid != localStorage["teamid"])
+		{
+			localStorage["team.id"] = teamid;
+			localStorage["team.shorthand"] = teamid;
+			localStorage["team.background"] = teamid;
+			localStorage["team.fontcolor"] = teamid;
+			localStorage["team.contactname"] = teamid;
+			localStorage["team.contactemail"] = teamid;
+			localStorage["team.listbackground"] = teamid;
+			localStorage["team.listfontcolor"] = teamid;
+		}
+	}
+	
+	if(window.location.pathname != "/" && localStorage.teamid == null)
+	{
+		window.location = window.location.protocol + "//" + window.location.host;
+	}
+}	
+	
 
 function headElement() {
     var html =
@@ -66,10 +118,10 @@ function header() {
 				console.log('error', textStatus, '//', errorThrown);
 			},
 			success: function (data) {
-				console.log('data: ' + JSON.stringify(data));	
+				//console.log('data: ' + JSON.stringify(data));	
 				var html = '';
 				$.each(data.pages, function (i, value) {
-					console.log('value: ' + JSON.stringify(value));
+					//console.log('value: ' + JSON.stringify(value));
 					html  += '        <li><a href="'+ value.url +'">'+ value.name +'</a></li>';
 				});
 
@@ -126,3 +178,14 @@ function siteConfig() {
         });
     };
 })();
+
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(null);
+}

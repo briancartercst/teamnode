@@ -20,23 +20,9 @@
 	
 	<div class="container">
 		<h2 class="page-header">Schedule</h2>
-
-		<div class="row alert alert-neutral" role="alert">
-			<div class="col-sm-2">
-				<b>Date</b>
-			</div>
-			<div class="col-sm-4">
-			    <b>Opponent</b>            
-			</div>
-			<div class="col-sm-4">
-			    <b>Location</b>            
-			</div>			
-			<div class="col-sm-2">
-			    <b>Result</b>
-			</div>        
-		</div>
-
-    <div class="schedules"></div>
+		<div class="schedules"></div>
+	</div>
+	<div class="footer"></div>
 	
 <script>
 	//Revealing Module Design Pattern 
@@ -52,6 +38,24 @@
 		var process = function() {
 			var html = '';
 			
+			html += '<div class="row alert alert-neutral" role="alert"';
+			html +=' style="background:';
+			html += localStorage.teamlistbackgroundcolor +';color:';
+			html += localStorage.teamlistfontcolor +';">';			
+			html += '	<div class="col-sm-2">';
+			html += '		<b>Date</b>';
+			html += '	</div>';
+			html += '	<div class="col-sm-4">';
+			html += '		<b>Opponent</b>';
+			html += '	</div>';
+			html += '	<div class="col-sm-4">';
+			html += '		<b>Location</b>';
+			html += '	</div>			';
+			html += '	<div class="col-sm-2">';
+			html += '		<b>Result</b>';
+			html += '	</div>        ';
+			html += '</div>			';
+			
 			var data = {teamid:localStorage.teamid};
 			$.ajax({ url: 'api/v1/schedules', 
 				dataType: 'json', contentType: 'application/json',
@@ -65,7 +69,10 @@
 					
 					$.each(data.results, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
-						html += '<div class="row alert alert-neutral" role="alert">';
+						html += '<div class="row alert alert-neutral" role="alert"';
+						html+=' style="background:';
+						html += localStorage.teamlistbackgroundcolor +';color:';
+						html += localStorage.teamlistfontcolor +';">';	
 						html  +=  
 						'  <div class="col-sm-2">' +
 						'   <span>'; html+=value.date + ' ' + value.time;html+='</span>' +
@@ -113,6 +120,6 @@
 
 </script>	
      
-	<div class="footer"></div>
+
 </body>
 </html>

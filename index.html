@@ -32,39 +32,10 @@
 	//Revealing Module Design Pattern 
 	var page = (function () {
 		var init = function() {
-			var data = {"id":"1"};
-			
-			$.ajax({ url: 'api/v1/info', 
-				dataType: 'json', contentType: 'application/json',
-				type: "POST",
-				data: JSON.stringify(data), 
-				error: function (jqxhr, textStatus, errorThrown) {
-					console.log('error', textStatus, '//', errorThrown);
-				},
-				success: function (data) {
-					//console.log('data: ' + JSON.stringify(data));				
-					
-					$.each(data.info, function (i, value) {
-						//console.log('local storage value: ' + JSON.stringify(value));
-						localStorage[value.category + value.key] = value["value"];
-					});	
-
-					document.title = localStorage["site" + "name"];
-					 $('.sitename').html(localStorage["site" + "name"]);
-					 $('.lead').html(localStorage["site" + "welcome"]);					
-					fetchTeams();
-				},
-				fail: function( jqxhr, textStatus, error ) {
-					var err = textStatus + ", " + error;
-					console.log( "Request Failed: " + err );
-					html  +=  
-						'<div class="col-sm-5">' +
-						'    <p>Error getting information.  Refresh and try again.' +
-						'    </p> ' + 
-						'</div>';
-					$('.teamlist').html(html);	
-				}			
-			});
+			document.title = localStorage["site" + "name"];
+			$('.sitename').html(localStorage["site" + "name"]);
+			$('.lead').html(localStorage["site" + "welcome"]);	
+			fetchTeams();
 		};
 	
 		//Public
@@ -92,7 +63,7 @@
 							'      <a id="';html+=value.id;
 										html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
 										html+=value.background +';color:';
-										html+=value.fontcolor+';" href="home">';
+										html+=value.fontcolor+';" href="home?teamid=' + value.id  + '">';
 										html += value.name;
 						html += 
 							'      </a> ' +
@@ -109,6 +80,8 @@
 						localStorage.teambackgroundcolor = e.target.style['background-color'];
 						localStorage.teamfontcolor = e.target.style['color'];
 						localStorage.teamname = e.target.text;
+						localStorage.teamlistbackgroundcolor = '#ffffff';
+						localStorage.teamlistfontcolor = '#000000';
 					}); 					
 				},
 				fail: function( jqxhr, textStatus, error ) {

@@ -3,7 +3,7 @@
 <head> 
   <title></title>
   <script src="./js/jquery.min.js"></script>
-  <script src="./js/site.js?v2"></script>
+  <script src="./js/site.js"></script>
 </head>
 <body>
   <div class="header"></div>
@@ -65,7 +65,7 @@
 				},
 				fail: function( jqxhr, textStatus, error ) {
 					var err = textStatus + ", " + error;
-					console.log( "Request Failed: " + err );
+					//console.log( "Request Failed: " + err );
 					html  +=  '<div class="row">';  					
 					html  +=  
 						'<div class="col-sm-5">' +
