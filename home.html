@@ -1,4 +1,4 @@
-	<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head> 
   <title></title>
@@ -6,53 +6,59 @@
   <script src="./js/site.js"></script>
 </head>
 <body>
-  <div class="header"></div>
+	<div class="header"></div>
 
-  <div class="jumbotron jumbotron-ad">
-    <div class="container">
-      <h1 class="sitename"></h1>
-      <p>
-	    <a class="sitename" href="index.html"></a>&nbsp;/&nbsp;<a class="teamname" href="home.html"></a>
-	  </p>
-    </div>
-  </div>     
+	<div class="container">
+	<h3>
+	<p style="font-size: 18px;">
+	<a class="" href="index.html">Home</a>&nbsp;/&nbsp;<span class="teamname" href="home.html"></span>
+	</p>	
+	</h3> 
+	</div>
   
   <div class="container">
-    <h2 class="page-header teamname"></h2>    
+    <h2 class="page-header teamname"></h2> 
     <div class="pagelist"></div>	
 
 <script>
 	//Revealing Module Design Pattern 
 	var page = (function () {
-		var init = function() {
-			document.title = localStorage.sitename;
-			$('.sitename').html(localStorage.sitename);
-			$('.teamname').html(localStorage.teamname);			
-		
-			fetchPages();
-		};
-	
-		var fetchPages = function() {
-			var html = '';
+		var init = function() {	
+			var data = {};
+			data["teamid"] = getQueryVariable("teamid");
+			var cache = {};
+			cache["teamid"] = getQueryVariable("teamid");
 			
-			var data = {teamid:localStorage.teamid};
-			$.ajax({ url: 'api/v1/pages', 
-				dataType: 'json', contentType: 'application/json',
-				type: "POST",
-				data: JSON.stringify(data), 
-				error: function (jqxhr, textStatus, errorThrown) {
-					console.log('error', textStatus, '//', errorThrown);
-				},
-				success: function (data) {
-					//console.log('data: ' + JSON.stringify(data));	
-					html  +=  '<div class="row">';  					
+			teamnode.fetchInfo().done( function (data) {
+				console.log("fetchInfo done: " + JSON.stringify(data));
+				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);				
+			});
+
+			teamnode.fetchTeams(data).done( function (data) {
+				console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				var team = data.teams[0];
+				
+				$('.teamname').html(team.name);		
+				
+				cache['teambackground'] = team.background;
+				cache['teamfontcolor'] = team.fontcolor;
+				
+			}).then(				
+			
+				teamnode.fetchPages(data).done( function (data) {
+					console.log("fetchPages in done: " + JSON.stringify(data));
+					var html = "";
 					
 					$.each(data.pages, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
 						html  +=  
 							'<div class="col-sm-5">' +
 							'    <p>' +
-							'      <a id="';html+=value.name;html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';html+=localStorage.teambackgroundcolor;html+=';color:';html+=localStorage.teamfontcolor;html+=';" href="';html+=value.url;html+='">';
+							'      <a id="';html+=value.name;html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';html+=cache['teambackground'];html+=';color:';html+=cache['teamfontcolor'];html+=';" href="';html+=value.url;html+='">';
 						html += value.name;
 						html += 
 							'      </a> ' +
@@ -61,23 +67,11 @@
 					});
 
 					html += '</div>';
-					$('.pagelist').html(html);
-				},
-				fail: function( jqxhr, textStatus, error ) {
-					var err = textStatus + ", " + error;
-					//console.log( "Request Failed: " + err );
-					html  +=  '<div class="row">';  					
-					html  +=  
-						'<div class="col-sm-5">' +
-						'    <p>Error getting information.  Refresh and try again.' +
-						'    </p> ' + 
-						'</div>';
-					html += '</div>';
-					$('.teamlist').html(html);	
-				}			
-			});
-		}	
-		
+					$('.pagelist').html(html);			
+				})
+			)				
+		};
+	
 		//Public functions add here; Private otherwise
 		return {
 			init: init,

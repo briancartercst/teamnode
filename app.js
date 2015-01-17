@@ -1,5 +1,6 @@
-// This supports Clusters and Domains
-//
+/*******************************************************/
+/*  Main application Supports Clusters and Domains     */
+/*******************************************************/
 var cluster = require('cluster');
 var url = require('url');
 var http = require('http');
@@ -14,9 +15,6 @@ var WORKERS = process.env.WORKERS || require('os').cpus().length;
 
 var main = (function () {
 	if (cluster.isMaster) {
-		//for dev, only need 1 worker
-		WORKERS = 1;
-
 		//master process
 		console.log('Master started.  Starting cluster with %s workers.', WORKERS);		
 		
@@ -76,6 +74,8 @@ var main = (function () {
 
 			//now run the handler function in the domain.  This will handle each request.
 			d.run(function () {
+					var queryData = url.parse(req.url, true).query;
+					
 				var postData = '';
 				
 				//chunk post data, append
@@ -85,11 +85,29 @@ var main = (function () {
 				
 				//post data done, process
 				req.addListener('end', function () {
-					var data;
+					var data = {};
 					
 					if(postData != '') {
 						data = JSON.parse(postData);
 					}
+
+					/********************************************/
+					/*  GET DATA FROM THE URL'S QUERYSTRING     */
+					/********************************************/
+					// Get the request url
+					var urlObj = url.parse(req.url, true);
+				 
+					// Add querystring parms to data
+					for(q in urlObj['query']) {
+							//console.log( q + " = " + urlObj['query'][q]);
+							data[q] = urlObj['query'][q];
+					}
+					
+					// update the variable defaultName if new name is passed from querystring
+					//if (urlObj['query']['teamid'] != undefined) {
+					//	console.log("updating 'teamid' variable to " + urlObj['query']['teamid']);
+					//	data["teamid"] = urlObj['query']['teamid'];
+					//} 
 					
 					var uri;
 					uri = url.parse(req.url).pathname;
@@ -117,8 +135,10 @@ var main = (function () {
 					res.write('{"error": "' + err + '"}');
 					res.end(); 
 				} else {
-					//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging	
+					//cache for 10 minutes local, shared cache 1 hour  -- or use without cache for dev debugging
 					res.writeHead(200, {'Content-Type': 'application/json', "Cache-Control": "public, max-age=600, s-maxage=3600"});
+					
+					//no cache
 					//res.writeHead(200, {'Content-Type': 'application/json'});	
 					
 					res.write(JSON.stringify(data));

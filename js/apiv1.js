@@ -15,9 +15,10 @@ var apiV1 = (function () {
 	var	dbLastInsertId = db.prepare('SELECT last_insert_rowid() as id');	
 
 	var	dbSelectInfo = db.prepare('SELECT id, category, key, value FROM info');
-	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams');	
 	
+	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams');	
 	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
+
 	var	dbSelectPages = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
     var	dbSelectSchedules = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');
 	var	dbSelectRosters = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
@@ -109,22 +110,35 @@ var apiV1 = (function () {
 		console.log('api v1: fetchTeams');
 		var jsonData = { teams: [] };			
 	
-		dbSelectTeams.each(function (err, row) {
-			if(err) {
-				callback(err);
-			} else {
-				jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
-			}	
-		}, function () {
-			callback(null,jsonData);
-		});	
+		if(data.teamid) {
+			dbSelectTeam.each([data.teamid], function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+				}	
+			}, function () {
+				callback(null,jsonData);
+			});			
+			
+		} else {
+			dbSelectTeams.each(function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.teams.push({ id: row.id, shorthand: row.shorthand, name: row.name, background: row.background, fontcolor: row.fontcolor });
+				}	
+			}, function () {
+				callback(null,jsonData);
+			});
+		}		
 	};
 	
 	var fetchPages = function(data, callback) {
-		console.log('api v1: fetchPages');
+		console.log('api v1: fetchPages: data = ' + JSON.stringify(data));
 		var jsonData = { pages: [] };			
 	
-		if(data) {	
+		if(data.teamid) {	
 			dbSelectPages.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);

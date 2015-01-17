@@ -1,73 +1,71 @@
-//define global config and variables
-var config;
-var teamnode = {};
 
-init();
 
+//teamnode init is fired first
 
 $( document ).ready(function() {
+	if(window.location.pathname != "/" && getQueryVariable("teamid") == null)
+	{
+		window.location = window.location.protocol + "//" + window.location.host;
+	}	
+	
 	$('.header').html(header());
 	$('.footer').html(footer());
 	footerScript();
 });
 
-function init() {
-	//preload logo to avoid flashing
-	logoImage = new Image();
-	logoImage.src = "./img/logo.png";
-	
-	initInfo();
-	
-	$('head').append(headElement());
-}
+var teamnode = (function () {	
+	var init = function() {
+		//preload logo to avoid flashing
+		logoImage = new Image();
+		logoImage.src = "./img/logo.png";
+		$('head').append(headElement());
+	}
 
-function initInfo() {
-	console.log("in initinfo");
-	if(localStorage.sitename == null)
-	{
-		var data = {};
-		$.ajax({ url: 'api/v1/info', 
+	var fetchInfo = function() {
+		console.log("in fetchInfo");
+
+		return $.ajax({ url: 'api/v1/info', 
 			dataType: 'json', contentType: 'application/json',
 			type: "GET",
-			data: JSON.stringify(data),
-			cache: true,
-			error: function (jqxhr, textStatus, errorThrown) {
-				console.log('error', textStatus, '//', errorThrown);
-			},
-			success: function (data) {
-				//console.log('data: ' + JSON.stringify(data));				
-				teamnode["info"] = data;
-			},
-			fail: function( jqxhr, textStatus, error ) {
-				var err = textStatus + ", " + error;
-				console.log( "Request Failed: " + err );
-			}			
+			cache: true
 		});
 	}
 	
-	var teamid = getQueryVariable("teamid");
-	//console.log("teamid: " + teamid);
-	if(teamid != null)
-	{
-		if(teamid != localStorage["teamid"])
-		{
-			localStorage["team.id"] = teamid;
-			localStorage["team.shorthand"] = teamid;
-			localStorage["team.background"] = teamid;
-			localStorage["team.fontcolor"] = teamid;
-			localStorage["team.contactname"] = teamid;
-			localStorage["team.contactemail"] = teamid;
-			localStorage["team.listbackground"] = teamid;
-			localStorage["team.listfontcolor"] = teamid;
-		}
+	var fetchTeams = function(data) {
+		console.log("in fetchTeams");
+		
+		return $.ajax({ url: 'api/v1/teams', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
 	}
+
+	var fetchPages = function(data) {
+		console.log("in fetchPages - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/pages', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}			
 	
-	if(window.location.pathname != "/" && localStorage.teamid == null)
-	{
-		window.location = window.location.protocol + "//" + window.location.host;
-	}
-}	
 	
+
+	//Public functions add here; Private otherwise
+	return {
+		init: init,
+		fetchInfo: fetchInfo,
+		fetchTeams: fetchTeams,
+		fetchPages: fetchPages,
+	};	
+	
+})();
+
+teamnode.init();
 
 function headElement() {
     var html =
@@ -100,7 +98,7 @@ function header() {
 		'        <span class="sr-only">Toggle navigation</span>' +
 		'        <i class="fa fa-bars fa-lg"></i>' +
 		'      </button>' +
-		'      <a class="navbar-brand" href="/">';html+=localStorage.sitename;html+='</a>' +
+		'      <a class="navbar-brand" href="/">';html+=localStorage["infositename"];html+='</a>' +
 		'    </div>' +
 		'    <div class="navbar-collapse collapse" style="height: 1px;">' +
 		'      <ul class="nav navbar-nav">' +
@@ -108,29 +106,6 @@ function header() {
 		'    </div>' +
 		'  </div>' +
 		'</div>';
-		
-		var data = {teamid:localStorage.teamid};
-		$.ajax({ url: 'api/v1/pages', 
-			dataType: 'json', contentType: 'application/json',
-			type: "POST",
-			data: JSON.stringify(data), 
-			error: function (jqxhr, textStatus, errorThrown) {
-				console.log('error', textStatus, '//', errorThrown);
-			},
-			success: function (data) {
-				//console.log('data: ' + JSON.stringify(data));	
-				var html = '';
-				$.each(data.pages, function (i, value) {
-					//console.log('value: ' + JSON.stringify(value));
-					html  += '        <li><a href="'+ value.url +'">'+ value.name +'</a></li>';
-				});
-
-				$('.nav').html(html);
-			},
-			fail: function( jqxhr, textStatus, error ) {
-			}			
-		});	
-		
 	return html;
 }
 
@@ -139,7 +114,7 @@ function footer() {
       '<div class="row">' +
       '  <div class="col-sm-12">' +
       '      <p>' +
-      '        &copy; ' + localStorage.sitename;
+      '        &copy; <span class="sitename"></span>';
       '      </p> ' + 
       '  </div>';
 
@@ -167,14 +142,14 @@ function siteConfig() {
 
 //getScript refactor to include caching
 (function () {
-    $.getScript = function(url, callback, cache)
+    $.getScript = function(url, callback, cacherequest)
     {
         $.ajax({
                 type: "GET",
                 url: url,
                 success: callback,
                 dataType: "script",
-                cache: cache
+                cache: cacherequest
         });
     };
 })();
@@ -189,3 +164,4 @@ function getQueryVariable(variable)
        }
        return(null);
 }
+

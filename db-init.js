@@ -86,6 +86,7 @@ db.serialize(function() {
 		
 		var dataInfo = [
 			["db", "version", "0"],
+			["ajax", "cache", "false"],
 			["site", "name", "Sample School"],
 			["site", "welcome", "Welcome to the Sample School Website.  Choose a team below to get team details."]
 		];

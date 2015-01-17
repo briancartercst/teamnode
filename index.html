@@ -6,13 +6,14 @@
   <script src="./js/site.js"></script>
 </head>
 <body>
+
   <div class="jumbotron jumbotron-ad">
     <div class="container">
       <h1 class="sitename"></h1>
     </div>
   </div>  
   
-  <div class="container">    
+  <div class="container">  
 
     <div id="logorow" class="row">
       <div class="col-sm-2">
@@ -30,74 +31,43 @@
 
 <script>
 	//Revealing Module Design Pattern 
-	var page = (function () {
-		var init = function() {
-			document.title = localStorage["site" + "name"];
-			$('.sitename').html(localStorage["site" + "name"]);
-			$('.lead').html(localStorage["site" + "welcome"]);	
-			fetchTeams();
-		};
-	
-		//Public
-		var fetchTeams = function() {
-			var html = '';
-			html  +=  '<div class="row">'; 
+	var page = (function () {		
+		var init = function() {		
+			teamnode.fetchInfo().done( function (data) {
+				console.log("fetchInfo done: " + JSON.stringify(data));
+				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);				
+			});
 			
-			var data = {};
-			$.ajax({ url: 'api/v1/teams', 
-				dataType: 'json', contentType: 'application/json',
-				type: "POST",
-				data: JSON.stringify(data), 
-				error: function (jqxhr, textStatus, errorThrown) {
-					console.log('error', textStatus, '//', errorThrown);
-				},
-				success: function (data) {
-					//console.log('data: ' + JSON.stringify(data));				
-					
-					$.each(data.teams, function (i, value) {
-						//console.log('value: ' + JSON.stringify(value));
-					
-						html  +=  
-							'<div class="col-sm-5">' +
-							'    <p>' +
-							'      <a id="';html+=value.id;
-										html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
-										html+=value.background +';color:';
-										html+=value.fontcolor+';" href="home?teamid=' + value.id  + '">';
-										html += value.name;
-						html += 
-							'      </a> ' +
-							'    </p> ' + 
-							'</div>';
-					});
-					
-					html += '</div>';
-					$('.teamlist').html(html);
-
-					//Cache the team selection in local storage
-					$(".btn").click(function(e) {
-						localStorage.teamid = e.target.id;
-						localStorage.teambackgroundcolor = e.target.style['background-color'];
-						localStorage.teamfontcolor = e.target.style['color'];
-						localStorage.teamname = e.target.text;
-						localStorage.teamlistbackgroundcolor = '#ffffff';
-						localStorage.teamlistfontcolor = '#000000';
-					}); 					
-				},
-				fail: function( jqxhr, textStatus, error ) {
-					var err = textStatus + ", " + error;
-					console.log( "Request Failed: " + err );
+			teamnode.fetchTeams().done( function (data) {
+				console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				
+				$.each(data.teams, function (i, value) {
+					console.log('index.html fetchteams value: ' + JSON.stringify(value));
+				
 					html  +=  
 						'<div class="col-sm-5">' +
-						'    <p>Error getting information.  Refresh and try again.' +
+						'    <p>' +
+						'      <a id="';html+=value.id;
+									html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
+									html+=value.background +';color:';
+									html+=value.fontcolor+';" href="home?teamid=' + value.id  + '">';
+									html += value.name;
+					html += 
+						'      </a> ' +
 						'    </p> ' + 
 						'</div>';
-					html += '</div>';
-					$('.teamlist').html(html);	
-				}			
-			});
-		}	
-		
+				});
+				
+				html += '</div>';
+				$('.teamlist').html(html);				
+			});	
+			
+		}; //init
+	
 		//Public functions add here; Private otherwise
 		return {
 			init: init,
@@ -106,8 +76,7 @@
 	})();
 	
 	$(document).ready(function () {
-		page.init();
-
+		page.init();	
 	});	
 
 </script>
