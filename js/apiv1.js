@@ -23,6 +23,10 @@ var apiV1 = (function () {
     var	dbSelectSchedules = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');
 	var	dbSelectRosters = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
 	
+	var dbSelectCoaches = db.prepare('Select coaches.id, firstname, lastname, phone, email FROM coaches JOIN teamscoaches ON coaches.id = teamscoaches.coachid WHERE teamscoaches.teamid = (?)');
+	var dbSelectNews = db.prepare('Select news.id, title, details, alert FROM news JOIN teamsnews ON news.id = teamsnews.newsid WHERE teamsnews.teamid = (?)');
+	
+	
 	var msgMissingParms = '{"error": "missing parameters: ';
 	var msgBadRequest = '{"error": "bad request"}';
 	
@@ -153,8 +157,8 @@ var apiV1 = (function () {
 		}
 	};	
 
-	var fetchSchedules = function(data, callback) {
-		console.log('api v1: fetchSchedules');
+	var fetchSchedule = function(data, callback) {
+		console.log('api v1: fetchSchedule');
 		var jsonData = { results: [] };			
 	
 		if(data) {	
@@ -172,8 +176,8 @@ var apiV1 = (function () {
 		}
 	};	
 
-	var fetchRosters = function(data, callback) {
-		console.log('api v1: fetchRosters');
+	var fetchRoster = function(data, callback) {
+		console.log('api v1: fetchRoster');
 		var jsonData = { results: [] };			
 	
 		if(data) {	
@@ -182,6 +186,44 @@ var apiV1 = (function () {
 					callback(err);
 				} else {
 					jsonData.results.push({ id: row.id, firstname: row.firstname, lastname: row.lastname, position: row.position, grade: row.grade, jersey: row.jersey});
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};	
+
+	var fetchCoaches = function(data, callback) {
+		console.log('api v1: fetchCoaches: data = ' + JSON.stringify(data));
+		var jsonData = { pages: [] };			
+	
+		if(data.teamid) {	
+			dbSelectCoaches.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.pages.push({ id: row.id, firstname: row.firstname, lastname: row.lastname, phone: row.phone, email: row.email  });
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};	
+	
+	var fetchNews = function(data, callback) {
+		console.log('api v1: fetchNews: data = ' + JSON.stringify(data));
+		var jsonData = { pages: [] };			
+	
+		if(data.teamid) {	
+			dbSelectNews.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.pages.push({ id: row.id, title: row.title, details: row.details, alert: row.alert });
 				}
 			}, function () {
 				callback(null,jsonData);
@@ -198,8 +240,10 @@ var apiV1 = (function () {
 		fetchInfo: fetchInfo,
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
-		fetchSchedules: fetchSchedules,		
-		fetchRosters: fetchRosters,		
+		fetchSchedule: fetchSchedule,		
+		fetchRoster: fetchRoster,
+		fetchCoaches: fetchCoaches,
+		fetchNews: fetchNews
 	};
 	
 })();
@@ -208,8 +252,10 @@ var apiV1 = (function () {
 exports.fetchInfo = apiV1.fetchInfo;
 exports.fetchTeams = apiV1.fetchTeams;
 exports.fetchPages = apiV1.fetchPages;
-exports.fetchSchedules = apiV1.fetchSchedules;
-exports.fetchRosters = apiV1.fetchRosters;
+exports.fetchSchedule = apiV1.fetchSchedule;
+exports.fetchRoster = apiV1.fetchRoster;
+exports.fetchCoaches = apiV1.fetchCoaches;
+exports.fetchNews = apiV1.fetchNews;
 exports.serveFromDisk = apiV1.serveFromDisk;
 
 

@@ -51,7 +51,29 @@ var teamnode = (function () {
 			cache: true,
 			data: data			
 		});
-	}			
+	}	
+
+	var fetchSchedule = function(data) {
+		console.log("in fetchSchedule - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/schedule', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}	
+
+	var fetchRoster = function(data) {
+		console.log("in fetchRosters - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/roster', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}		
 	
 	
 
@@ -61,6 +83,8 @@ var teamnode = (function () {
 		fetchInfo: fetchInfo,
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
+		fetchSchedule: fetchSchedule,
+		fetchRoster: fetchRoster,
 	};	
 	
 })();
@@ -98,7 +122,7 @@ function header() {
 		'        <span class="sr-only">Toggle navigation</span>' +
 		'        <i class="fa fa-bars fa-lg"></i>' +
 		'      </button>' +
-		'      <a class="navbar-brand" href="/">';html+=localStorage["infositename"];html+='</a>' +
+		'      <a class="navbar-brand sitename" href="/"></a>' +
 		'    </div>' +
 		'    <div class="navbar-collapse collapse" style="height: 1px;">' +
 		'      <ul class="nav navbar-nav">' +
@@ -134,10 +158,6 @@ function footerScript() {
 	newscript.src = document.location.protocol + "./js/bootstrap.min.js";
 	var s0 = document.getElementsByTagName('script')[0];
 	s0.parentNode.insertBefore(newscript, s0);		
-}
-
-function siteConfig() {
-
 }
 
 //getScript refactor to include caching

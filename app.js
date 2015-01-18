@@ -118,10 +118,14 @@ var main = (function () {
 						apiv1.fetchTeams(data, callback);
 					} else if (uri === '/api/v1/pages') {
 						apiv1.fetchPages(data, callback);						
-					} else if (uri === '/api/v1/schedules') {
-						apiv1.fetchSchedules(data, callback);	
-					} else if (uri === '/api/v1/rosters') {
-						apiv1.fetchRosters(data, callback);						
+					} else if (uri === '/api/v1/schedule') {
+						apiv1.fetchSchedule(data, callback);	
+					} else if (uri === '/api/v1/roster') {
+						apiv1.fetchRoster(data, callback);	
+					} else if (uri === '/api/v1/coaches') {
+						apiv1.fetchCoaches(data, callback);	
+					} else if (uri === '/api/v1/news') {
+						apiv1.fetchNews(data, callback);							
 					} else {
 						apiv1.serveFromDisk(uri, res);
 					}					

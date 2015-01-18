@@ -48,6 +48,16 @@ var db = new sqlite3.Database(file);
 //write message to output console - shows users what is happening
 console.log("DB file creation finished");
 
+var fetchLastInsertId = function(callback) {
+	dbLastInsertId.each(function (err, row) {
+		if(err) {
+			callback(err);
+		} else {
+			callback(null,row);
+		}
+	});	
+};
+
 db.serialize(function() {
 	//---------------------------------------------------------------------------------------------------
 	//  database tables create 
@@ -75,6 +85,19 @@ db.serialize(function() {
 		console.log("-- rosters started");
 		db.run('CREATE TABLE rosters (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, position TEXT, grade TEXT, jersey TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
 		db.run('CREATE INDEX IndexTeamsRosters ON rosters(teamid)');
+		
+		console.log("-- coaches started");
+		db.run('CREATE TABLE coaches (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT)');
+		db.run('CREATE TABLE teamscoaches (id INTEGER PRIMARY KEY, teamid INTEGER, coachid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(coachid) REFERENCES coaches(id))');
+		db.run('CREATE INDEX IndexTeamsCoachesTeam ON teamscoaches(teamid)');
+		db.run('CREATE INDEX IndexTeamsCoachesCoach ON teamscoaches(coachid)');
+		
+		console.log("-- news started");
+		db.run('CREATE TABLE news (id INTEGER PRIMARY KEY, guid TEXT, title TEXT, details TEXT, alert INTEGER)');
+		db.run('CREATE TABLE teamsnews (id INTEGER PRIMARY KEY, teamid INTEGER, newsid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(newsid) REFERENCES news(id))');
+		db.run('CREATE INDEX IndexTeamsNewsTeam ON teamsnews(teamid)');
+		db.run('CREATE INDEX IndexTeamsNewsNews ON teamsnews(newsid)');		
+		
 	});	
 	
 	//---------------------------------------------------------------------------------------------------
@@ -275,8 +298,146 @@ db.serialize(function() {
 				});
 			});		
 		};	
+	});	
+
+
+	
+	
+	db.serialize(function() {
+		//Insert coaches
+		console.log("Insert coaches started");
+		
+		var dataCoaches = [
+			["John", "Doe", "johndoe@fake.com", "502-555-1212"],
+			["Jane", "Doe", "janedoe@fake.com", "502-555-1212"],
+		];
+	  
+		var stmt = db.prepare('INSERT INTO coaches (firstname, lastname, email, phone) VALUES (?, ?, ?, ?)');
+	  
+		for (i = 0; i < dataCoaches.length; i += 1) {
+			db.get("SELECT " + i + " as i", [], function (error, row) {
+				var current = dataCoaches[row['i']];
+				stmt.run(current[0], current[1], current[2], current[3], function (err) {
+					if(err) {
+						console.log('Coaches add error: ' + err);
+					} else {
+						console.log('Coaches Add: ' + current[0] + '-' + current[1]);
+					}
+				});
+			});		
+		};
+	});
+
+	
+	db.serialize(function() {
+		//Insert team coaches
+		console.log("Insert team coaches started");
+		
+		var dataTeamsCoaches = [
+			["bv", "johndoe@fake.com"],
+			["bjv", "johndoe@fake.com"],
+			["gv", "janedoe@fake.com"],
+			["gjv", "janedoe@fake.com"],
+		];
+	  
+		var stmt = db.prepare('INSERT INTO teamscoaches (teamid, coachid) VALUES (?, ?)');
+	  
+		for (i = 0; i < dataTeamsCoaches.length; i += 1) {			
+			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataTeamsCoaches[i][0]], function (error, row) {
+				var current = dataTeamsCoaches[row['i']];
+				var currentTeam = row;
+				
+				db.get("SELECT " + row['i'] + " as i, id as coachid FROM coaches WHERE email=?", [current[1]], function (error, row) {
+					var currentCoach = dataTeamsCoaches[row['i']];					
+					
+					stmt.run(currentTeam['teamid'], row['coachid'], function (err) {
+						if(err) {
+							console.log('Team Coach add error: ' + err);
+						} else {
+							console.log('Team Coach Add: ' + current[0] + '-' + current[1]);
+						}
+					});					
+				})
+			});		
+		};	//for
 	});		
-});	
+	
+
+	
+	db.serialize(function() {
+		//Insert news
+		console.log("Insert news started");
+		
+		var dataNews = [
+			["d7fcf5383dd34168b01c7c1c9d45a982", "Practice Cancelled for Today 9/18!", "Due to weather, the games for today have been cancelled 9/18", 1],						
+			["1cb11a5e78294193b7e85d6f120e59cb", "Boys Varsity team wins district", "Congrats to the Boys Varsity team for winning the 2014 district!", 0],
+			["27e1f3d561564ebf9b788ea6c26e208e", "Coach Doe receives award", "Coach Doe received the award for coach of the year from the KY Soccer Association", 0],
+			["d137a4c04d4a4a33b41d28362fc3a90c", "All Teams lunch Oct 16th at noon BWs", "The celebration lunch will be at Bad Wings on Main and 5th.  Oct 16th at noon.  See you there.", 0],
+			["8a54286c10f049e599fed7be7061ce9d", "Girls Varsity Season", "Congrats to the Girls varsity team for a great season!", 0],
+			["48bb9aa9d1a14730b5dbc8fe8127ade2", "Boys JV awards @school 10/20", "Boys JV awards will be given out at school assembly 2pm on 10/20.", 0],
+		];
+	  
+		var stmt = db.prepare('INSERT INTO news (guid, title, details, alert) VALUES (?, ?, ?, ?)');
+	  
+		for (i = 0; i < dataNews.length; i += 1) {
+			db.get("SELECT " + i + " as i", [], function (error, row) {
+				var current = dataNews[row['i']];
+				stmt.run(current[0], current[1], current[2], current[3], function (err) {
+					if(err) {
+						console.log('Coaches add error: ' + err);
+					} else {
+						console.log('Coaches Add: ' + current[0] + '-' + current[1]);
+					}
+				});
+			});		
+		};
+	});
+
+	
+	db.serialize(function() {
+		//Insert team news
+		console.log("Insert team news started");
+		
+		var dataTeamsNews = [
+			["bv", "d7fcf5383dd34168b01c7c1c9d45a982"],
+			["bjv", "d7fcf5383dd34168b01c7c1c9d45a982"],	
+			["gv", "d7fcf5383dd34168b01c7c1c9d45a982"],	
+			["gjv", "d7fcf5383dd34168b01c7c1c9d45a982"],				
+			["bv", "1cb11a5e78294193b7e85d6f120e59cb"],
+			["bv", "27e1f3d561564ebf9b788ea6c26e208e"],
+			["bjv", "27e1f3d561564ebf9b788ea6c26e208e"],			
+			["bv", "d137a4c04d4a4a33b41d28362fc3a90c"],
+			["bjv", "d137a4c04d4a4a33b41d28362fc3a90c"],
+			["gv", "d137a4c04d4a4a33b41d28362fc3a90c"],
+			["gjv", "d137a4c04d4a4a33b41d28362fc3a90c"],			
+			["gv", "8a54286c10f049e599fed7be7061ce9d"],
+			["bjv", "48bb9aa9d1a14730b5dbc8fe8127ade2"]			
+		];
+	  
+		var stmt = db.prepare('INSERT INTO teamsnews (teamid, newsid) VALUES (?, ?)');
+	  
+		for (i = 0; i < dataTeamsNews.length; i += 1) {			
+			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataTeamsNews[i][0]], function (error, row) {
+				var current = dataTeamsNews[row['i']];
+				var currentTeam = row;
+				
+				db.get("SELECT " + row['i'] + " as i, id as newsid FROM news WHERE guid=?", [current[1]], function (error, row) {
+					var currentNews = dataTeamsNews[row['i']];					
+					
+					stmt.run(currentTeam['teamid'], row['newsid'], function (err) {
+						if(err) {
+							console.log('Team News add error: ' + err);
+						} else {
+							console.log('Team News Add: ' + current[0] + '-' + current[1]);
+						}
+					});					
+				})
+			});		
+		};	//for
+	});		
+
+	
+});	//top serialize
 
 
 
