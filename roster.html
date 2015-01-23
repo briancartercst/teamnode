@@ -19,21 +19,6 @@
   <div class="container">
     <h2 class="page-header">Roster</h2>
 
-    <div class="row alert alert-neutral" role="alert">
-      <div class="col-sm-2">
-        <b>Jersey</b>
-      </div>
-      <div class="col-sm-4">
-          <b>Name</b>            
-      </div>
-      <div class="col-sm-2">
-          <b>Position</b>
-      </div> 
-      <div class="col-sm-2">
-          <b>Grade</b>
-      </div>              
-    </div>
-
     <div class="roster"></div>
 
 <script>
@@ -41,10 +26,8 @@
 	var page = (function () {
 		var init = function() {
 		
-			var data = {};
-			data["teamid"] = getQueryVariable("teamid");
-			var cache = {};
-			cache["teamid"] = getQueryVariable("teamid");
+			var team = {};
+			team.teamid = getQueryVariable("teamid");
 			
 			teamnode.fetchInfo().done( function (data) {
 				console.log("fetchInfo done: " + JSON.stringify(data));
@@ -52,28 +35,43 @@
 				document.title = data.sitename;
 				$('.sitename').html(data.sitename);
 				$('.lead').html(data.sitewelcome);	
-				$('.homeref').attr('href','home?teamid='+cache["teamid"]);
+				$('.homeref').attr('href','home?teamid='+ team.teamid);
 			});			
 		
-			teamnode.fetchTeams(data).done( function (data) {
+			teamnode.fetchTeams(team).done( function (data) {
 				console.log("fetchTeams done: " + JSON.stringify(data));
 				var html = "";
-				var team = data.teams[0];
+				team = data.teams[0];
+				team.teamid = team.id;
 				
 				$('.teamname').html(team.name);	
 				
-				cache['teambackground'] = team.background;
-				cache['teamfontcolor'] = team.fontcolor;
-				
-			}).then(
-			
-				teamnode.fetchRoster(data).done( function (data) {
+				teamnode.fetchRoster({teamid:team.id}).done( function (data) {
 					console.log("fetchRoster done: " + JSON.stringify(data));
 					var html = "";
+					
+					html += '<div class="row alert alert-neutral" role="alert"';
+					html +=' style="background:';
+					html += team.background +';color:';
+					html += team.fontcolor +';">';						
+					html += '  <div class="col-sm-2">';
+					html += '	<b>Jersey</b>';
+					html += '  </div>';
+					html += '  <div class="col-sm-4">';
+					html += '	  <b>Name</b>     ';       
+					html += '  </div>';
+					html += '  <div class="col-sm-2">';
+					html += '	  <b>Position</b>';
+					html += '  </div> ';
+					html += '  <div class="col-sm-2">';
+					html += '	  <b>Grade</b>';
+					html += '  </div>  ';            
+					html += '</div>';					
 
 					$.each(data.results, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
-						html += '<div class="row alert alert-neutral" role="alert">';
+						html += '<div class="row alert alert-neutral" role="alert"';
+						html += ' style="color:black">';
 						html  +=  
 							'  <div class="col-sm-2">' +
 							'   <span>'; html+=value.jersey;html+='</span>' +
@@ -92,8 +90,8 @@
 
 					$('.roster').html(html);					
 
-				})
-			)	
+				})				
+			})
 		};
 	
 

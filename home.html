@@ -24,33 +24,28 @@
 	//Revealing Module Design Pattern 
 	var page = (function () {
 		var init = function() {	
-			var data = {};
-			data["teamid"] = getQueryVariable("teamid");
-			var cache = {};
-			cache["teamid"] = getQueryVariable("teamid");
+			var team = {};
+			team["teamid"] = getQueryVariable("teamid");
 			
 			teamnode.fetchInfo().done( function (data) {
-				console.log("fetchInfo done: " + JSON.stringify(data));
+				//console.log("fetchInfo done: " + JSON.stringify(data));
 				
 				document.title = data.sitename;
 				$('.sitename').html(data.sitename);
 				$('.lead').html(data.sitewelcome);				
+			}).fail(function() {
+				$('.pagelist').html(teamnode.dataErrorMessage);
 			});
-
-			teamnode.fetchTeams(data).done( function (data) {
-				console.log("fetchTeams done: " + JSON.stringify(data));
-				var html = "";
-				var team = data.teams[0];
-				
-				$('.teamname').html(team.name);		
-				
-				cache['teambackground'] = team.background;
-				cache['teamfontcolor'] = team.fontcolor;
-				
-			}).then(				
 			
-				teamnode.fetchPages(data).done( function (data) {
-					console.log("fetchPages in done: " + JSON.stringify(data));
+			teamnode.fetchTeams(team).done( function (data) {
+				//console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				team = data.teams[0];
+				team.teamid = team.id;
+				$('.teamname').html(team.name);	
+				
+				teamnode.fetchPages({teamid:team.id}).done( function (data) {
+					//console.log("fetchPages in done: " + JSON.stringify(data));
 					var html = "";
 					
 					$.each(data.pages, function (i, value) {
@@ -58,7 +53,7 @@
 						html  +=  
 							'<div class="col-sm-5">' +
 							'    <p>' +
-							'      <a id="';html+=value.name;html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';html+=cache['teambackground'];html+=';color:';html+=cache['teamfontcolor'];html+=';" href="';html+=value.url+'?teamid='+cache["teamid"];html+='">';
+							'      <a id="';html+=value.name;html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';html+=team.background;html+=';color:';html+=team.fontcolor;html+=';" href="';html+=value.url+'?teamid='+team.id;html+='">';
 						html += value.name;
 						html += 
 							'      </a> ' +
@@ -68,8 +63,11 @@
 
 					html += '</div>';
 					$('.pagelist').html(html);			
-				})
-			)				
+				})	
+				
+			}).fail(function() {
+				$('.pagelist').html(teamnode.dataErrorMessage);
+			});
 		};
 	
 		//Public functions add here; Private otherwise

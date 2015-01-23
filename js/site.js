@@ -1,5 +1,4 @@
 
-
 //teamnode init is fired first
 
 $( document ).ready(function() {
@@ -13,7 +12,9 @@ $( document ).ready(function() {
 	footerScript();
 });
 
-var teamnode = (function () {	
+var teamnode = (function () {
+	var dataErrorMessage = "Could not retrieve information - Please refresh your browser";
+	
 	var init = function() {
 		//preload logo to avoid flashing
 		logoImage = new Image();
@@ -22,7 +23,7 @@ var teamnode = (function () {
 	}
 
 	var fetchInfo = function() {
-		console.log("in fetchInfo");
+		//console.log("in fetchInfo");
 
 		return $.ajax({ url: 'api/v1/info', 
 			dataType: 'json', contentType: 'application/json',
@@ -32,7 +33,7 @@ var teamnode = (function () {
 	}
 	
 	var fetchTeams = function(data) {
-		console.log("in fetchTeams");
+		//console.log("in fetchTeams");
 		
 		return $.ajax({ url: 'api/v1/teams', 
 			dataType: 'json', contentType: 'application/json',
@@ -43,7 +44,7 @@ var teamnode = (function () {
 	}
 
 	var fetchPages = function(data) {
-		console.log("in fetchPages - data = " + JSON.stringify(data));
+		//console.log("in fetchPages - data = " + JSON.stringify(data));
 		
 		return $.ajax({ url: 'api/v1/pages', 
 			dataType: 'json', contentType: 'application/json',
@@ -54,7 +55,7 @@ var teamnode = (function () {
 	}	
 
 	var fetchSchedule = function(data) {
-		console.log("in fetchSchedule - data = " + JSON.stringify(data));
+		//console.log("in fetchSchedule - data = " + JSON.stringify(data));
 		
 		return $.ajax({ url: 'api/v1/schedule', 
 			dataType: 'json', contentType: 'application/json',
@@ -65,7 +66,7 @@ var teamnode = (function () {
 	}	
 
 	var fetchRoster = function(data) {
-		console.log("in fetchRosters - data = " + JSON.stringify(data));
+		//console.log("in fetchRosters - data = " + JSON.stringify(data));
 		
 		return $.ajax({ url: 'api/v1/roster', 
 			dataType: 'json', contentType: 'application/json',
@@ -75,6 +76,16 @@ var teamnode = (function () {
 		});
 	}		
 	
+	var fetchNews = function(data) {
+		//console.log("in fetchRosters - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/news', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}		
 	
 
 	//Public functions add here; Private otherwise
@@ -85,6 +96,8 @@ var teamnode = (function () {
 		fetchPages: fetchPages,
 		fetchSchedule: fetchSchedule,
 		fetchRoster: fetchRoster,
+		fetchNews: fetchNews,
+		dataErrorMessage: dataErrorMessage
 	};	
 	
 })();
@@ -130,6 +143,36 @@ function header() {
 		'    </div>' +
 		'  </div>' +
 		'</div>';
+
+	var team = {};
+	team.teamid = getQueryVariable("teamid");
+	console.log("in header, querystring: " + getQueryVariable("teamid"));
+	
+	if(team.teamid)
+	{
+		teamnode.fetchPages({teamid:team.teamid}).done( function (data) {
+			//console.log("fetchPages in done: " + JSON.stringify(data));
+			var html = "";
+			
+			$.each(data.pages, function (i, value) {
+				//console.log('value: ' + JSON.stringify(value));
+				//html  += '        <li '; if(cache.page.name=='home'){html +='class="active"'}; html+='><a href="'+ value.url +'">'+ value.name +'</a></li>';
+				
+				if(window.location.pathname.toUpperCase().indexOf(value.name.toUpperCase()) > 0)
+				{
+					html  += '        <li class="active"><a href="'+ value.url + '?teamid='+team.teamid +'">'+ value.name +'</a></li>';
+				} else {
+					html  += '        <li><a href="'+ value.url + '?teamid='+team.teamid +'">'+ value.name +'</a></li>';
+				}
+
+
+			});
+
+			$('.nav').html(html);			
+		})	
+	}	
+
+		
 	return html;
 }
 

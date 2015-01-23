@@ -24,41 +24,33 @@
 	//Revealing Module Design Pattern 
 	var page = (function () {
 		var init = function() {
-		
-			var data = {};
-			data["teamid"] = getQueryVariable("teamid");
-			var cache = {};
-			cache["teamid"] = getQueryVariable("teamid");
+			var team = {};
+			team["teamid"] = getQueryVariable("teamid");
 			
 			teamnode.fetchInfo().done( function (data) {
-				console.log("fetchInfo done: " + JSON.stringify(data));
+				//console.log("fetchInfo done: " + JSON.stringify(data));
 				
 				document.title = data.sitename;
 				$('.sitename').html(data.sitename);
 				$('.lead').html(data.sitewelcome);	
-				$('.homeref').attr('href','home?teamid='+cache["teamid"]);
+				$('.homeref').attr('href','home?teamid='+ team["teamid"]);
 			});			
 		
-			teamnode.fetchTeams(data).done( function (data) {
-				console.log("fetchTeams done: " + JSON.stringify(data));
+			teamnode.fetchTeams(team).done( function (data) {
+				//console.log("fetchTeams done: " + JSON.stringify(data));
 				var html = "";
-				var team = data.teams[0];
-				
+				team = data.teams[0];
+				team.teamid = team.id;
 				$('.teamname').html(team.name);	
 				
-				cache['teambackground'] = team.background;
-				cache['teamfontcolor'] = team.fontcolor;
-				
-			}).then(
-			
-				teamnode.fetchSchedule(data).done( function (data) {
-					console.log("fetchSchedules done: " + JSON.stringify(data));
+				teamnode.fetchSchedule({teamid:team.id}).done( function (data) {
+					//console.log("fetchSchedules done: " + JSON.stringify(data));
 					var html = "";
 					
 					html += '<div class="row alert alert-neutral" role="alert"';
 					html +=' style="background:';
-					html += cache['teambackground'] +';color:';
-					html += cache['teamfontcolor'] +';">';			
+					html += team.background +';color:';
+					html += team.fontcolor +';">';			
 					html += '	<div class="col-sm-2">';
 					html += '		<b>Date</b>';
 					html += '	</div>';
@@ -76,9 +68,8 @@
 					$.each(data.results, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
 						html += '<div class="row alert alert-neutral" role="alert"';
-						html+=' style="background:';
-						html += localStorage.teamlistbackgroundcolor +';color:';
-						html += localStorage.teamlistfontcolor +';">';	
+						html += ' style="color:black"';
+						html += ';">';	
 						html  +=  
 						'  <div class="col-sm-2">' +
 						'   <span>'; html+=value.date + ' ' + value.time;html+='</span>' +
@@ -96,15 +87,15 @@
 					});
 
 					$('.schedules').html(html);			
-				})
-			)	
-		};
+				})				
+			})	
+		}	
 	
 
 		//Public functions add here; Private otherwise
 		return {
 			init: init,
-		};
+		}
 
 	})();
 	

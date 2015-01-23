@@ -34,20 +34,18 @@
 	var page = (function () {		
 		var init = function() {		
 			teamnode.fetchInfo().done( function (data) {
-				console.log("fetchInfo done: " + JSON.stringify(data));
-				
+				//console.log("fetchInfo done: " + JSON.stringify(data));				
 				document.title = data.sitename;
 				$('.sitename').html(data.sitename);
 				$('.lead').html(data.sitewelcome);				
 			});
 			
 			teamnode.fetchTeams().done( function (data) {
-				console.log("fetchTeams done: " + JSON.stringify(data));
+				//console.log("fetchTeams done: " + JSON.stringify(data));
 				var html = "";
 				
 				$.each(data.teams, function (i, value) {
-					console.log('index.html fetchteams value: ' + JSON.stringify(value));
-				
+					//console.log('index.html fetchteams value: ' + JSON.stringify(value));				
 					html  +=  
 						'<div class="col-sm-5">' +
 						'    <p>' +
@@ -64,7 +62,7 @@
 				
 				html += '</div>';
 				$('.teamlist').html(html);				
-			});	
+			});	//fetchTeams
 			
 		}; //init
 	
