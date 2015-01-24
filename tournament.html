@@ -20,7 +20,6 @@
     <h2 class="page-header">Tournament</h2>
 
     <div class="Tournament">
-		<iframe frameborder="0" class="maxpreps-widget" src="http://www.maxpreps.com/widgets/tournament.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&amp;ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&amp;bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a&amp;width=1200&amp;height=900&amp;memeberid=5c84e3b8-99be-42ac-a048-e011fc2d312e&amp;allow-scrollbar=true&amp;ref=http%3A%2F%2Ffloydcentralsoccer.org%2Ftournament.html" style="width: 1200px; height: 900px; overflow: auto;"></iframe><script type="text/javascript">(function(d){var mp = d.createElement('script'),h=d.getElementsByTagName('head')[0];mp.type='text/javascript';mp.async=true;mp.src='http://www.maxpreps.com/includes/js/widget/widget.compressed.js';h.appendChild(mp);})(document);</script>	
 	</div>
 
 
@@ -49,49 +48,16 @@
 				
 				$('.teamname').html(team.name);	
 				
-				teamnode.fetchRoster({teamid:team.id}).done( function (data) {
-					console.log("fetchRoster done: " + JSON.stringify(data));
+				teamnode.fetchTournaments({teamid:team.id}).done( function (data) {
+					console.log("fetchTournaments done: " + JSON.stringify(data));
 					var html = "";
-					
-					html += '<div class="row alert alert-neutral" role="alert"';
-					html +=' style="background:';
-					html += team.background +';color:';
-					html += team.fontcolor +';">';						
-					html += '  <div class="col-sm-2">';
-					html += '	<b>Jersey</b>';
-					html += '  </div>';
-					html += '  <div class="col-sm-4">';
-					html += '	  <b>Name</b>     ';       
-					html += '  </div>';
-					html += '  <div class="col-sm-2">';
-					html += '	  <b>Position</b>';
-					html += '  </div> ';
-					html += '  <div class="col-sm-2">';
-					html += '	  <b>Grade</b>';
-					html += '  </div>  ';            
-					html += '</div>';					
 
-					$.each(data.results, function (i, value) {
+					$.each(data.tournaments, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
-						html += '<div class="row alert alert-neutral" role="alert"';
-						html += ' style="color:black">';
-						html  +=  
-							'  <div class="col-sm-2">' +
-							'   <span>'; html+=value.jersey;html+='</span>' +
-							'   </div>' +
-							'  <div class="col-sm-4">' +
-							'      <span>';html+=value.firstname+' '+value.lastname;html+='</span> ' +           
-							'  </div>' +
-							'  <div class="col-sm-2">' +
-							'      <span>';html+=value.position;html+='</span>' +
-							'  </div>    ' + 
-							'  <div class="col-sm-2">' +
-							'      <span>';html+=value.grade;html+='</span>' +
-							'  </div>    ' +                 
-							'</div> ';
+						html += value.widget;
 					});
 
-					$('.roster').html(html);					
+					$('.Tournament').html(html);					
 
 				})				
 			})

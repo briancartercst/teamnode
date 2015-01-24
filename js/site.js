@@ -144,7 +144,8 @@ var teamnode = (function () {
 		fetchNews: fetchNews,
 		fetchCoaches: fetchCoaches,
 		fetchGalleries: fetchGalleries,
-		fetchPhotos: fetchPhotos
+		fetchPhotos: fetchPhotos,
+		fetchTournaments: fetchTournaments
 	};	
 	
 })();
