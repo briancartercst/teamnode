@@ -10,6 +10,10 @@ TeamNode is a node.js starter kit.  You won't find anything fancy here, just the
 ```bash
  node db-init.js   -- This will create the Sqlite3 database with sample data.
  node app.js
+ 
+ or to update and have node restart automatically:
+ nodemon app.js
+ 
  ```
 
 ## Libraries
