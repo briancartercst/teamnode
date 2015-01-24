@@ -1,7 +1,11 @@
 # teamnode
 This is a website for teams.  Framework is using html, css, js, and node.js.  The database is Sqlite3.
 
-TeamNode is a node.js starter kit.  You won't find anything fancy here, just the way I start all my node.js projects. I know about complexity but I don't see the point if I'm constantly trying to figure out how it works instead of getting the features done. Node.js provides the environment to keep it simple.  The side effect, this kit provides a good starting point for learning.  I do hope you find this as a good starting point, or like me, a good project to fork.  Our team welcomes constructive feedback and participation!
+TeamNode is based on HANDS.  You won't find anything fancy here, just the way I start all my node.js projects. 
+I know about complexity but I don't see the point if I'm constantly trying to figure out how it works instead of getting the features done. 
+Node.js provides the environment to keep it simple.  This kit provides a good framework for learning.  
+
+I do hope you find this as a good site for your teams, or like me, a good project to fork.  Our team welcomes constructive feedback and participation!
 
 
 
