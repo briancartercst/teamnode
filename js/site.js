@@ -85,19 +85,55 @@ var teamnode = (function () {
 			cache: true,
 			data: data			
 		});
+	}
+
+	var fetchCoaches = function(data) {
+		//console.log("in fetchCoaches - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/coaches', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}
+
+	var fetchGalleries = function(data) {
+		//console.log("in fetchGalleries - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/galleries', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}
+
+	var fetchPhotos = function(data) {
+		//console.log("in fetchPhotos - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/photos', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
 	}		
 	
 
 	//Public functions add here; Private otherwise
 	return {
 		init: init,
+		dataErrorMessage: dataErrorMessage,
 		fetchInfo: fetchInfo,
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
 		fetchSchedule: fetchSchedule,
 		fetchRoster: fetchRoster,
 		fetchNews: fetchNews,
-		dataErrorMessage: dataErrorMessage
+		fetchCoaches: fetchCoaches,
+		fetchGalleries: fetchGalleries,
+		fetchPhotos: fetchPhotos
 	};	
 	
 })();

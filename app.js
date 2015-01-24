@@ -125,7 +125,11 @@ var main = (function () {
 					} else if (uri === '/api/v1/coaches') {
 						apiv1.fetchCoaches(data, callback);	
 					} else if (uri === '/api/v1/news') {
-						apiv1.fetchNews(data, callback);							
+						apiv1.fetchNews(data, callback);
+					} else if (uri === '/api/v1/galleries') {
+						apiv1.fetchGalleries(data, callback);
+					} else if (uri === '/api/v1/photos') {
+						apiv1.fetchPhotos(data, callback);							
 					} else {
 						apiv1.serveFromDisk(uri, res);
 					}					

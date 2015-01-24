@@ -6780,6 +6780,7 @@ div.bsap a.adhere:hover {
   }
   .jumbotron-ad h1 {
     margin-top: 25px;
+	margin-left: 25px;
     font-size: 90px;
   }
   .jumbotron-ad p {

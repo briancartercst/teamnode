@@ -1,31 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Floyd Central Soccer | Photos</title> 
+<head> 
+  <title></title>
   <script src="./js/jquery.min.js"></script>
-  <script src="./js/site.js?v2"></script>
-  <script>cache.page.name = 'photos';</script>
+  <script src="./js/site.js"></script>
+
+<style>
+	ul {
+		padding:0;
+		margin:0
+	}
+
+	ul li {
+		list-style:none;
+	}
+
+	ul li img {
+		cursor:pointer
+	}
+
+	.modal-body {
+		padding:5px!important
+	}
+
+	.modal-content {
+		border-radius:0
+	}
+
+	.modal-dialog img {
+		text-align:center;
+		margin:0 auto
+	}
+
+	.controls {
+		width:50px;
+		display:block;
+		font-size:11px;
+		padding-top:8px;
+		font-weight:700
+	}
+
+	.next {
+		float:right;
+		text-align:right
+	}
+
+	.modal-dialog {
+		max-width:800px;
+		padding-top:90px
+	}
+
+	@media (min-width: 768px) {
+		.modal-dialog {
+			max-width:600px;
+			padding-top:90px
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 991px) {
+		.modal-dialog {
+			max-width:800px;
+			padding-top:90px
+		}
+	}
+
+	@media (min-width: 992px) and (max-width: 1199px) {
+		.modal-dialog {
+			max-width:1000px;
+			padding-top:90px
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.modal-dialog {
+			width:1100px;
+			padding-top:90px
+		}
+	}
+  </style>  
 </head>
 
 <body>
-  <div class="header"></div>  
+	<div class="header"></div>
 
-    <div class="jumbotron jumbotron-ad">
-      <div class="container">
-        <h1 class="sitename"><script>$('.sitename').html(cache.site.name);</script></h1>
-        <p><a class="sitename" href="index.html"><script>$('.sitename').html(cache.site.name);</script>
-          </a>&nbsp;/&nbsp;<a class="teamname" href="home.html"><script>$('.teamname').html(cache.teams[localStorage.id].name);</script></a></p>
-      </div>
-    </div>   
+	<div class="container">
+		<h3>
+		<p style="font-size: 18px;">
+		<a class="" href="index">Home</a>&nbsp;/&nbsp;<a class="homeref teamname" href="home"></a>&nbsp;/&nbsp;<a class="photogalleries">Photos</a>&nbsp;/&nbsp;<span class="galleryname"></span>
+		</p>	
+		</h3> 
+	</div>
   
   <div class="container">
     <h2 class="page-header">Photos</h2>
-    Coming Soon!
 
-    <div class="footer"></div>
-  </div>  
+    <div class="photos"></div>
+
+   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">         
+          <div class="modal-body">                
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {
+		var init = function() {
+		
+			var team = {};
+			team.teamid = getQueryVariable("teamid");
+			
+			teamnode.fetchInfo().done( function (data) {
+				console.log("fetchInfo done: " + JSON.stringify(data));
+				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);	
+				$('.homeref').attr('href','home?teamid='+ team.teamid);
+			});			
+		
+			teamnode.fetchTeams(team).done( function (data) {
+				console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				team = data.teams[0];
+				team.teamid = team.id;
+				team.gallery = getQueryVariable("gallery")
+				
+				$('.teamname').html(team.name);	
+				$('.galleryname').html(team.gallery);
+				$('.page-header').html('Photos ' + team.gallery + ' Gallery');
+				$('.photogalleries').attr('href','photogalleries?teamid=' + team.teamid);
+				
+				teamnode.fetchPhotos({teamid:team.id, gallery:team.gallery}).done( function (data) {
+					console.log("fetchPhotos done: " + JSON.stringify(data));
+					var html = "";
+					
+					html += '<div class="inject">';
+					html += '	<ul class="row">';
+
+					$.each(data.photos, function (i, value) {
+						//console.log('value: ' + JSON.stringify(value));
+						html += '<li class="col-lg-3 col-md-2 col-sm-6 col-xs-12">';
+						html += '	<img class="img-responsive" src="img/photos/'+value.filename+'">';
+						html += '</li>';					
+					});
+					
+					html += '	</li>';  			
+					html += '</ul>';
+		  
+
+					$('.photos').html(html);	
+
+					setupImage();
+					setupClick();					
+
+				})				
+			})
+			
+
+		};
+
+		var setupClick = function() {
+			$(document).on('click', 'a.controls', function(){
+				var index = $(this).attr('href');
+				var src = $('ul.row li:nth-child('+ index +') img').attr('src');             
+				
+				$('.modal-body img').attr('src', src);
+				
+				var newPrevIndex = parseInt(index) - 1; 
+				var newNextIndex = parseInt(newPrevIndex) + 2; 
+				
+				if($(this).hasClass('previous')){               
+					$(this).attr('href', newPrevIndex); 
+					$('a.next').attr('href', newNextIndex);
+				}else{
+					$(this).attr('href', newNextIndex); 
+					$('a.previous').attr('href', newPrevIndex);
+				}
+				
+				var total = $('ul.row li').length + 1; 
+				//hide next button
+				if(total === newNextIndex){
+					$('a.next').hide();
+				}else{
+					$('a.next').show()
+				}            
+				//hide previous button
+				if(newPrevIndex === 0){
+					$('a.previous').hide();
+				}else{
+					$('a.previous').show()
+				}
+				
+				
+				return false;
+			});		
+		}
+		var setupImage = function() {
+            $('li img').on('click',function(){
+                var src = $(this).attr('src');
+                var img = '<img src="' + src + '" class="img-responsive"/>';
+                
+                //start of new code new code
+                var index = $(this).parent('li').index();   
+                
+                var html = '';
+                html += img;                
+                html += '<div style="height:25px;clear:both;display:block;">';
+                html += '<a class="controls next" href="'+ (index+2) + '">next &raquo;</a>';
+                html += '<a class="controls previous" href="' + (index) + '">&laquo; prev</a>';
+                html += '</div>';
+                
+                $('#myModal').modal();
+                $('#myModal').on('shown.bs.modal', function(){
+                    $('#myModal .modal-body').html(html);
+                    //new code
+                    $('a.controls').trigger('click');
+                })
+                $('#myModal').on('hidden.bs.modal', function(){
+                    $('#myModal .modal-body').html('');
+                });
+           });		
+		}
+	
+
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+			setupClick: setupClick,
+			setupImage: setupImage
+		};
+
+	})();
+	
+	$(document).ready(function () {
+		page.init();
+
+	});	
+
+</script>		
 
      
-
+  <div class="footer"></div>
 </body>
 </html>

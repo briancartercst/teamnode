@@ -6808,6 +6808,8 @@ div.bsap a.adhere:hover {
   }
   .jumbotron-ad h1 {
     margin-top: 25px;
+	margin-left: 35px;
+	margin-bottom: 35px;
     font-size: 80px;
   }
   .jumbotron-ad p {
@@ -6851,6 +6853,8 @@ div.bsap a.adhere:hover {
 
   .jumbotron-ad h1 {
     margin-top: 25px;
+	margin-left: 35px;
+	margin-bottom: 35px;
     font-size: 70px;
   }
 }
@@ -6882,6 +6886,12 @@ div.bsap a.adhere:hover {
   .jumbotron-carousel .shameless-self-promotion {
     font-size: 12px;
   }
+  
+  .jumbotron {
+    display:block;
+    margin:auto;
+  } 
+  
   .jumbotron-ad p {
     font-size: 24px;
   }
@@ -6913,7 +6923,7 @@ div.bsap a.adhere:hover {
 }
 
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   #icon-carousel {
     font-size: 180px;
     line-height: 200px;
@@ -6945,6 +6955,8 @@ div.bsap a.adhere:hover {
     font-size: 12px;
   }
   .jumbotron-ad h1 {
+    margin-left: 35px;
+	margin-bottom: 35px;
     font-size: 39px;
   }
   .jumbotron-ad p {
@@ -7061,6 +7073,7 @@ margin-right: 0px;
   .jumbotron {
     display:block;
     margin:auto;
+    text-align: center;
   } 
 
 }

@@ -10,31 +10,16 @@ var sqlite3 = require('sqlite3');
 //Immediately-Invoked-Function-Expression, it declares a function, which then calls itself immediately 
 var apiV1 = (function () {
 	var	mimeTypes = {'html': 'text/html', 'png': 'image/png', "jpeg": "image/jpeg", "jpg": "image/jpeg", 'js': 'text/javascript', 'css': 'text/css'};
-	var	db = new sqlite3.Database('teamnode.db');
-	
-	var	dbLastInsertId = db.prepare('SELECT last_insert_rowid() as id');	
-
-	var	dbSelectInfo = db.prepare('SELECT id, category, key, value FROM info');
-	
-	var	dbSelectTeams = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams');	
-	var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
-
-	var	dbSelectPages = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
-    var	dbSelectSchedules = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');
-	var	dbSelectRosters = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
-	
-	var dbSelectCoaches = db.prepare('Select coaches.id, firstname, lastname, phone, email FROM coaches JOIN teamscoaches ON coaches.id = teamscoaches.coachid WHERE teamscoaches.teamid = (?)');
-	var dbSelectNews = db.prepare('Select news.id, title, details, alert FROM news JOIN teamsnews ON news.id = teamsnews.newsid WHERE teamsnews.teamid = (?)');
-	
-	
 	var msgMissingParms = '{"error": "missing parameters: ';
 	var msgBadRequest = '{"error": "bad request"}';
+
+	//database, establish filename association 
+	var	db = new sqlite3.Database('teamnode.db');
 	
 	var serveFromDisk = function(filename, response) {
 		var pathname;
-		var stats, extension, mimeType, fileStream;		
+		var stats, extension, mimeType, fileStream;	
 
-		
 		try {
 			pathname = path.join(process.cwd(), unescape(filename));		
 			extension = path.extname(pathname).substr(1);
@@ -84,7 +69,9 @@ var apiV1 = (function () {
 	}; 
 	
 	var fetchLastInsertId = function(callback) {
-		dbLastInsertId.each(function (err, row) {
+		var	dbStatement = db.prepare('SELECT last_insert_rowid() as id');
+		
+		dbStatement.each(function (err, row) {
 			if(err) {
 				callback(err);
 			} else {
@@ -95,9 +82,10 @@ var apiV1 = (function () {
 
 	var fetchInfo = function(data, callback) {
 		console.log('api v1: fetchInfo');
+		var	dbStatement = db.prepare('SELECT id, category, key, value FROM info');
 		var jsonData = {};			
 	
-		dbSelectInfo.each(function (err, row) {
+		dbStatement.each(function (err, row) {
 			if(err) {
 				callback(err);
 			} else {
@@ -112,6 +100,8 @@ var apiV1 = (function () {
 
 	var fetchTeams = function(data, callback) {
 		console.log('api v1: fetchTeams');
+		var	dbStatement = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams');
+		var	dbSelectTeam = db.prepare('SELECT id, shorthand, name, background, fontcolor FROM teams WHERE id = (?)');
 		var jsonData = { teams: [] };			
 	
 		if(data.teamid) {
@@ -126,7 +116,7 @@ var apiV1 = (function () {
 			});			
 			
 		} else {
-			dbSelectTeams.each(function (err, row) {
+			dbStatement.each(function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -140,10 +130,11 @@ var apiV1 = (function () {
 	
 	var fetchPages = function(data, callback) {
 		console.log('api v1: fetchPages: data = ' + JSON.stringify(data));
+		var	dbStatement = db.prepare('SELECT id, name, url FROM pages WHERE teamid = (?)');	
 		var jsonData = { pages: [] };			
 	
 		if(data.teamid) {	
-			dbSelectPages.each([data.teamid],function (err, row) {
+			dbStatement.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -159,10 +150,11 @@ var apiV1 = (function () {
 
 	var fetchSchedule = function(data, callback) {
 		console.log('api v1: fetchSchedule');
+		var	dbStatement = db.prepare('SELECT id, date, time, opponent, location, score, result FROM schedules WHERE teamid = (?)');
 		var jsonData = { results: [] };			
 	
 		if(data) {	
-			dbSelectSchedules.each([data.teamid],function (err, row) {
+			dbStatement.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -178,10 +170,11 @@ var apiV1 = (function () {
 
 	var fetchRoster = function(data, callback) {
 		console.log('api v1: fetchRoster');
+		var	dbStatement = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
 		var jsonData = { results: [] };			
 	
 		if(data) {	
-			dbSelectRosters.each([data.teamid],function (err, row) {
+			dbStatement.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -197,10 +190,11 @@ var apiV1 = (function () {
 
 	var fetchCoaches = function(data, callback) {
 		console.log('api v1: fetchCoaches: data = ' + JSON.stringify(data));
+		var dbStatement = db.prepare('Select coaches.id, firstname, lastname, phone, email FROM coaches JOIN teamscoaches ON coaches.id = teamscoaches.coachid WHERE teamscoaches.teamid = (?)');
 		var jsonData = { pages: [] };			
 	
 		if(data.teamid) {	
-			dbSelectCoaches.each([data.teamid],function (err, row) {
+			dbStatement.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -216,10 +210,11 @@ var apiV1 = (function () {
 	
 	var fetchNews = function(data, callback) {
 		console.log('api v1: fetchNews: data = ' + JSON.stringify(data));
+		var dbStatement = db.prepare('Select news.id, title, details, alert FROM news JOIN teamsnews ON news.id = teamsnews.newsid WHERE teamsnews.teamid = (?)');
 		var jsonData = { pages: [] };			
 	
 		if(data.teamid) {	
-			dbSelectNews.each([data.teamid],function (err, row) {
+			dbStatement.each([data.teamid],function (err, row) {
 				if(err) {
 					callback(err);
 				} else {
@@ -231,8 +226,47 @@ var apiV1 = (function () {
 		} else {
 			callback(new Error('Missing teamid'));
 		}
-	};		
+	};
+
+	var fetchGalleries = function(data, callback) {
+		console.log('api v1: fetchGalleries: data = ' + JSON.stringify(data));
+		var dbStatement = db.prepare('Select distinct gallery FROM photos JOIN teamsphotos ON photos.id = teamsphotos.photoid WHERE teamsphotos.teamid = (?)');
+		var jsonData = { galleries: [] };			
 	
+		if(data.teamid) {	
+			dbStatement.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.galleries.push({ gallery: row.gallery});
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};	
+	
+	var fetchPhotos = function(data, callback) {
+		console.log('api v1: fetchPhotos: data = ' + JSON.stringify(data));
+		var dbStatement = db.prepare('Select photos.id, title, description, gallery, filename FROM photos JOIN teamsphotos ON photos.id = teamsphotos.photoid WHERE teamsphotos.teamid = (?) and teamsphotos.gallery = (?)');
+		var jsonData = { photos: [] };			
+	
+		if(data.teamid) {	
+			dbStatement.each([data.teamid, data.gallery],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.photos.push({id: row.id, title: row.title, description: row.description, gallery: row.gallery, filename: row.filename});
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
+	};		
  
 	//Expose methods as public
 	return {
@@ -243,12 +277,15 @@ var apiV1 = (function () {
 		fetchSchedule: fetchSchedule,		
 		fetchRoster: fetchRoster,
 		fetchCoaches: fetchCoaches,
-		fetchNews: fetchNews
+		fetchNews: fetchNews,
+		fetchGalleries: fetchGalleries,
+		fetchPhotos: fetchPhotos
 	};
 	
 })();
 
 //Export functions that are exposed for use by other modules
+exports.serveFromDisk = apiV1.serveFromDisk;
 exports.fetchInfo = apiV1.fetchInfo;
 exports.fetchTeams = apiV1.fetchTeams;
 exports.fetchPages = apiV1.fetchPages;
@@ -256,6 +293,9 @@ exports.fetchSchedule = apiV1.fetchSchedule;
 exports.fetchRoster = apiV1.fetchRoster;
 exports.fetchCoaches = apiV1.fetchCoaches;
 exports.fetchNews = apiV1.fetchNews;
-exports.serveFromDisk = apiV1.serveFromDisk;
+exports.fetchGalleries = apiV1.fetchGalleries;
+exports.fetchPhotos = apiV1.fetchPhotos;
+
+
 
 

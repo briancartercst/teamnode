@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title></title>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/site.js"></script>
+</head>
+<body>
+	<div class="header"></div>
+
+	<div class="container">
+		<h3>
+		<p style="font-size: 18px;">
+		<a class="" href="index.html">Home</a>&nbsp;/&nbsp;<a class="homeref teamname" href="home.html"></a>&nbsp;/&nbsp;<span>Photos</span>
+		</p>	
+		</h3> 
+	</div>
+  
+  <div class="container">
+    <h2 class="page-header">Photo Galleries</h2>
+
+    <div class="page-content"></div>
+	
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {
+		var init = function() {
+		
+			var team = {};
+			team.teamid = getQueryVariable("teamid");
+			
+			teamnode.fetchInfo().done( function (data) {
+				console.log("fetchInfo done: " + JSON.stringify(data));
+				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);	
+				$('.homeref').attr('href','home?teamid='+ team.teamid);
+			});			
+		
+			teamnode.fetchTeams(team).done( function (data) {
+				console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				team = data.teams[0];
+				team.teamid = team.id;
+				
+				$('.teamname').html(team.name);	
+				
+				teamnode.fetchGalleries({teamid:team.id}).done( function (data) {
+					console.log("fetchGalleries done: " + JSON.stringify(data));
+					var html = "";
+					
+					$.each(data.galleries, function (i, value) {
+						//console.log('value: ' + JSON.stringify(value));
+						html  +=  
+							'<div class="col-sm-5">' +
+							'    <p>' +
+							'      <a id="';
+						html+=value.gallery;
+						html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
+						html+=team.background;
+						html+=';color:';
+						html+=team.fontcolor;
+						html+=';" href="photos?teamid='+team.id+'&gallery='+value.gallery;
+						html+='">';
+						html += value.gallery;
+						html += 
+							'      </a> ' +
+							'    </p> ' + 
+							'</div>';
+					});
+
+					$('.page-content').html(html);					
+
+				})				
+			})
+		};
+	
+
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+		};
+
+	})();
+	
+	$(document).ready(function () {
+		page.init();
+
+	});	
+
+</script>		
+
+     
+  <div class="footer"></div>
+</body>
+</html>

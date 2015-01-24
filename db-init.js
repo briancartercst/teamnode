@@ -96,7 +96,12 @@ db.serialize(function() {
 		db.run('CREATE TABLE news (id INTEGER PRIMARY KEY, guid TEXT, title TEXT, details TEXT, alert INTEGER)');
 		db.run('CREATE TABLE teamsnews (id INTEGER PRIMARY KEY, teamid INTEGER, newsid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(newsid) REFERENCES news(id))');
 		db.run('CREATE INDEX IndexTeamsNewsTeam ON teamsnews(teamid)');
-		db.run('CREATE INDEX IndexTeamsNewsNews ON teamsnews(newsid)');		
+
+		console.log("-- photos started");
+		db.run('CREATE TABLE photos (id INTEGER PRIMARY KEY, title TEXT, description TEXT, filename TEXT)');
+		db.run('CREATE TABLE teamsphotos (id INTEGER PRIMARY KEY, teamid INTEGER, photoid INTEGER, gallery TEXT, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(photoid) REFERENCES photos(id))');
+		db.run('CREATE INDEX IndexTeamsPhotos ON teamsphotos(teamid)');
+	
 		
 	});	
 	
@@ -168,7 +173,7 @@ db.serialize(function() {
 			["bv", "News", "news"],	
 			["bv", "Coaches", "coaches"],
 			["bv", "Tournament", "tournament"],	
-			["bv", "Photos", "photos"],	
+			["bv", "Photos", "photogalleries"],	
 			["bjv", "Schedule", "schedule"],	
 			["bjv", "Roster", "roster"],	
 			["bjv", "News", "news"],	
@@ -178,7 +183,7 @@ db.serialize(function() {
 			["gv", "News", "news"],	
 			["gv", "Coaches", "coaches"],	
 			["gv", "Tournament", "tournament"],	
-			["gv", "Photos", "photos"],	
+			["gv", "Photos", "photogalleries"],	
 			["gjv", "Schedule", "schedule"],	
 			["gjv", "Roster", "roster"],	
 			["gjv", "News", "news"],	
@@ -435,6 +440,91 @@ db.serialize(function() {
 			});		
 		};	//for
 	});		
+	
+	
+	
+	
+	db.serialize(function() {
+		//Insert photos
+		console.log("Insert photos started");
+		
+		var dataPhotos = [
+			["Soccer1", "This is soccer 1", "s1.png"],
+			["Soccer2", "This is soccer 2", "s2.png"],
+			["Soccer3", "This is soccer 3", "s3.png"],
+			["Soccer4", "This is soccer 4", "s4.png"],
+			["Soccer5", "This is soccer 5", "s5.png"],
+			["Soccer6", "This is soccer 6", "s6.png"],
+			["Soccer7", "This is soccer 7", "s7.png"],
+			["Soccer8", "This is soccer 8", "s8.png"],
+			["Soccer9", "This is soccer 9", "s9.png"],
+			["Soccer10", "This is soccer 10","s10.png"],
+			["Soccer11", "This is soccer 11", "s11.png"],			
+		];
+	  
+		var stmt = db.prepare('INSERT INTO photos (title, description, filename) VALUES (?, ?, ?)');
+	  
+		for (i = 0; i < dataPhotos.length; i += 1) {
+			db.get("SELECT " + i + " as i", [], function (error, row) {
+				var current = dataPhotos[row['i']];
+				stmt.run(current[0], current[1], current[2], function (err) {
+					if(err) {
+						console.log('Photos add error: ' + err);
+					} else {
+						console.log('Photos Add: ' + current[0] + '-' + current[1]);
+					}
+				});
+			});		
+		};
+	});
+
+	
+	db.serialize(function() {
+		//Insert team photos
+		console.log("Insert team photos started");
+		
+		var dataTeamsPhotos = [
+			["bv", "s1.png", "Demo"],
+			["bv", "s2.png", "Demo"],
+			["bv", "s3.png", "Demo"],
+			["bv", "s4.png", "Demo"],
+			["bv", "s5.png", "Demo"],
+			["bv", "s6.png", "Demo"],
+			["bv", "s7.png", "Demo"],
+			["bv", "s8.png", "Demo"],
+			["bv", "s9.png", "Demo"],
+			["bv", "s10.png", "Demo"],
+			["bv", "s11.png", "Demo"],
+			["bv", "s1.png", "Demo2"],
+			["bv", "s2.png", "Demo2"],
+			["bv", "s3.png", "Demo2"],
+			["bv", "s4.png", "Demo2"],			
+			["bjv", "s1.png", "Demo"],
+			["gv", "s1.png", "Demo"],
+			["gjv", "s1.png", "Demo"],
+		];
+	  
+		var stmt = db.prepare('INSERT INTO teamsphotos (teamid, photoid, gallery) VALUES (?, ?, ?)');
+	  
+		for (i = 0; i < dataTeamsPhotos.length; i += 1) {			
+			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataTeamsPhotos[i][0]], function (error, row) {
+				var current = dataTeamsPhotos[row['i']];
+				var currentTeam = row;
+				
+				db.get("SELECT " + row['i'] + " as i, id as photoid FROM photos WHERE filename=?", [current[1]], function (error, row) {
+					var currentPhoto = dataTeamsPhotos[row['i']];					
+					
+					stmt.run(currentTeam['teamid'], row['photoid'], currentPhoto[2], function (err) {
+						if(err) {
+							console.log('Team Photo add error: ' + err);
+						} else {
+							console.log('Team Photo Add: ' + current[0] + '-' + current[1]);
+						}
+					});					
+				})
+			});		
+		};	//for
+	});			
 
 	
 });	//top serialize
