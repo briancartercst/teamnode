@@ -462,7 +462,10 @@ db.serialize(function() {
 			["Soccer8", "This is soccer 8", "s8.png"],
 			["Soccer9", "This is soccer 9", "s9.png"],
 			["Soccer10", "This is soccer 10","s10.png"],
-			["Soccer11", "This is soccer 11", "s11.png"],			
+			["Soccer11", "This is soccer 11", "s11.png"],	
+			["Soccer12", "This is soccer 12", "s12.png"],
+			["Soccer13", "This is soccer 13", "s13.png"],
+			["Soccer14", "This is soccer 14", "s14.png"],			
 		];
 	  
 		var stmt = db.prepare('INSERT INTO photos (title, description, filename) VALUES (?, ?, ?)');
@@ -503,8 +506,12 @@ db.serialize(function() {
 			["bv", "s3.png", "Demo2"],
 			["bv", "s4.png", "Demo2"],			
 			["bjv", "s1.png", "Demo"],
-			["gv", "s1.png", "Demo"],
-			["gjv", "s1.png", "Demo"],
+			["gv", "s12.png", "Demo"],
+			["gv", "s13.png", "Demo"],
+			["gv", "s14.png", "Demo"],			
+			["gjv", "s12.png", "Demo2"],
+			["gjv", "s13.png", "Demo2"],
+			["gjv", "s14.png", "Demo2"],
 		];
 	  
 		var stmt = db.prepare('INSERT INTO teamsphotos (teamid, photoid, gallery) VALUES (?, ?, ?)');
@@ -549,7 +556,7 @@ db.serialize(function() {
 					if(err) {
 						console.log('Team Tournament add error: ' + err);
 					} else {
-						console.log('Team Tournament Add: ' + current[0] + '-' + current[1]);
+						console.log('Team Tournament Add: ' + current[0]);
 					}
 				});
 			});		
