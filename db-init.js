@@ -68,41 +68,43 @@ db.serialize(function() {
 
 		console.log("create tables started");
 
-		console.log("-- info started");
+		console.log("-- info");
 		db.run('CREATE TABLE info (id INTEGER PRIMARY KEY, category TEXT, key TEXT, value TEXT)');
 		
-		console.log("-- teams started");
+		console.log("-- teams");
 		db.run('CREATE TABLE teams (id INTEGER PRIMARY KEY, shorthand TEXT, name TEXT, background TEXT, fontcolor TEXT, contactname TEXT, contactemail TEXT, listbackground TEXT, listfontcolor TEXT)');
 		
-		console.log("-- pages started");
+		console.log("-- pages");
 		db.run('CREATE TABLE pages (id INTEGER PRIMARY KEY, name TEXT, url TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
 		db.run('CREATE INDEX IndexTeamsPages ON pages(teamid)');	
 		
-		console.log("-- schedules started");
+		console.log("-- schedules");
 		db.run('CREATE TABLE schedules (id INTEGER PRIMARY KEY, date TEXT, time TEXT, opponent TEXT, location TEXT, score TEXT, result INTEGER, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
 		db.run('CREATE INDEX IndexTeamsSchedules ON schedules(teamid)');
 		
-		console.log("-- rosters started");
+		console.log("-- rosters");
 		db.run('CREATE TABLE rosters (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, position TEXT, grade TEXT, jersey TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
 		db.run('CREATE INDEX IndexTeamsRosters ON rosters(teamid)');
 		
-		console.log("-- coaches started");
+		console.log("-- coaches");
 		db.run('CREATE TABLE coaches (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, phone TEXT, email TEXT)');
 		db.run('CREATE TABLE teamscoaches (id INTEGER PRIMARY KEY, teamid INTEGER, coachid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(coachid) REFERENCES coaches(id))');
 		db.run('CREATE INDEX IndexTeamsCoachesTeam ON teamscoaches(teamid)');
 		db.run('CREATE INDEX IndexTeamsCoachesCoach ON teamscoaches(coachid)');
 		
-		console.log("-- news started");
+		console.log("-- news");
 		db.run('CREATE TABLE news (id INTEGER PRIMARY KEY, guid TEXT, title TEXT, details TEXT, alert INTEGER)');
 		db.run('CREATE TABLE teamsnews (id INTEGER PRIMARY KEY, teamid INTEGER, newsid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(newsid) REFERENCES news(id))');
 		db.run('CREATE INDEX IndexTeamsNewsTeam ON teamsnews(teamid)');
 
-		console.log("-- photos started");
+		console.log("-- photos");
 		db.run('CREATE TABLE photos (id INTEGER PRIMARY KEY, title TEXT, description TEXT, filename TEXT)');
 		db.run('CREATE TABLE teamsphotos (id INTEGER PRIMARY KEY, teamid INTEGER, photoid INTEGER, gallery TEXT, FOREIGN KEY(teamid) REFERENCES teams(id), FOREIGN KEY(photoid) REFERENCES photos(id))');
 		db.run('CREATE INDEX IndexTeamsPhotos ON teamsphotos(teamid)');
 	
-		
+		console.log("-- tournament");
+		db.run('CREATE TABLE tournaments (id INTEGER PRIMARY KEY, widget TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
+		db.run('CREATE INDEX IndexTeamsTournaments ON pages(teamid)');		
 	});	
 	
 	//---------------------------------------------------------------------------------------------------
@@ -172,18 +174,19 @@ db.serialize(function() {
 			["bv", "Roster", "roster"],	
 			["bv", "News", "news"],	
 			["bv", "Coaches", "coaches"],
+			["bv", "Photos", "photogalleries"],
 			["bv", "Tournament", "tournament"],	
-			["bv", "Photos", "photogalleries"],	
 			["bjv", "Schedule", "schedule"],	
 			["bjv", "Roster", "roster"],	
 			["bjv", "News", "news"],	
-			["bjv", "Coaches", "coaches"],		
+			["bjv", "Coaches", "coaches"],
+			["bjv", "Photos", "photogalleries"],			
 			["gv", "Schedule", "schedule"],	
 			["gv", "Roster", "roster"],	
 			["gv", "News", "news"],	
 			["gv", "Coaches", "coaches"],	
-			["gv", "Tournament", "tournament"],	
 			["gv", "Photos", "photogalleries"],	
+			["gv", "Tournament", "tournament"],	
 			["gjv", "Schedule", "schedule"],	
 			["gjv", "Roster", "roster"],	
 			["gjv", "News", "news"],	
@@ -524,7 +527,34 @@ db.serialize(function() {
 				})
 			});		
 		};	//for
-	});			
+	});
+
+	db.serialize(function() {
+		//Insert tournament
+		console.log("Insert tournament started");
+		
+		var dataPages = [
+			["bv", "%3Ciframe%20frameborder%3D%220%22%20class%3D%22maxpreps-widget%22%20src%3D%22http%3A%2F%2Fwww.maxpreps.com%2Fwidgets%2Ftournament.aspx%3Ftournamentid%3Df7904f71-a13e-e411-b4d2-002655e6c45a%26amp%3Bssid%3Df9bafe0d-45cb-4693-aa16-f8766dc2f9fb%26amp%3Bbracketid%3D3e8b7250-3e40-e411-b4d2-002655e6c45a%26amp%3Bwidth%3D1200%26amp%3Bheight%3D900%26amp%3Bmemeberid%3D5c84e3b8-99be-42ac-a048-e011fc2d312e%26amp%3Ballow-scrollbar%3Dtrue%26amp%3Bref%3Dhttp%253A%252F%252Ffloydcentralsoccer.org%252Ftournament.html%22%20style%3D%22width%3A%201200px%3B%20height%3A%20900px%3B%20overflow%3A%20auto%3B%22%3E%3C%2Fiframe%3E%3Cscript%20type%3D%22text%2Fjavascript%22%3E(function(d)%7Bvar%20mp%20%3D%20d.createElement(%27script%27)%2Ch%3Dd.getElementsByTagName(%27head%27)%5B0%5D%3Bmp.type%3D%27text%2Fjavascript%27%3Bmp.async%3Dtrue%3Bmp.src%3D%27http%3A%2F%2Fwww.maxpreps.com%2Fincludes%2Fjs%2Fwidget%2Fwidget.compressed.js%27%3Bh.appendChild(mp)%3B%7D)(document)%3B%3C%2Fscript%3E"],	
+			["bjv", "%3Ciframe%20frameborder%3D%220%22%20class%3D%22maxpreps-widget%22%20src%3D%22http%3A%2F%2Fwww.maxpreps.com%2Fwidgets%2Ftournament.aspx%3Ftournamentid%3Df7904f71-a13e-e411-b4d2-002655e6c45a%26amp%3Bssid%3Df9bafe0d-45cb-4693-aa16-f8766dc2f9fb%26amp%3Bbracketid%3D3e8b7250-3e40-e411-b4d2-002655e6c45a%26amp%3Bwidth%3D1200%26amp%3Bheight%3D900%26amp%3Bmemeberid%3D5c84e3b8-99be-42ac-a048-e011fc2d312e%26amp%3Ballow-scrollbar%3Dtrue%26amp%3Bref%3Dhttp%253A%252F%252Ffloydcentralsoccer.org%252Ftournament.html%22%20style%3D%22width%3A%201200px%3B%20height%3A%20900px%3B%20overflow%3A%20auto%3B%22%3E%3C%2Fiframe%3E%3Cscript%20type%3D%22text%2Fjavascript%22%3E(function(d)%7Bvar%20mp%20%3D%20d.createElement(%27script%27)%2Ch%3Dd.getElementsByTagName(%27head%27)%5B0%5D%3Bmp.type%3D%27text%2Fjavascript%27%3Bmp.async%3Dtrue%3Bmp.src%3D%27http%3A%2F%2Fwww.maxpreps.com%2Fincludes%2Fjs%2Fwidget%2Fwidget.compressed.js%27%3Bh.appendChild(mp)%3B%7D)(document)%3B%3C%2Fscript%3E"],	
+			["gv", "Schedule"],	
+			["gjv", "Coaches"]
+		];
+
+		var stmt = db.prepare('INSERT INTO tournaments (widget, teamid) VALUES (?, ?)');
+	  
+		for (i = 0; i < dataPages.length; i += 1) {
+			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataPages[i][0]], function (error, row) {
+				var current = dataPages[row['i']];
+				stmt.run(current[1], row['teamid'], function (err) {
+					if(err) {
+						console.log('Team Tournament add error: ' + err);
+					} else {
+						console.log('Team Tournament Add: ' + current[0] + '-' + current[1]);
+					}
+				});
+			});		
+		};
+	});		
 
 	
 });	//top serialize

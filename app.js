@@ -7,7 +7,10 @@ var http = require('http');
 var path = require('path');
 var fs = require('fs');
 var querystring = require('querystring');
-var apiv1 = require('./js/apiv1.js');
+
+var api = {};
+api["v1"] = require('./js/apiv1.js');
+var defaultVersion = "v1";
 
 //variables used for configuration
 var PORT = +process.env.PORT || 8080;
@@ -103,36 +106,50 @@ var main = (function () {
 							data[q] = urlObj['query'][q];
 					}
 					
-					// update the variable defaultName if new name is passed from querystring
-					//if (urlObj['query']['teamid'] != undefined) {
-					//	console.log("updating 'teamid' variable to " + urlObj['query']['teamid']);
-					//	data["teamid"] = urlObj['query']['teamid'];
-					//} 
-					
 					var uri;
 					uri = url.parse(req.url).pathname;
+					
+					//extract version and method to build call to api
+					var reqparts = uri.split("/");
+					var version;
+					var method;
+					var arrayLength = reqparts.length;
+					for (var i = 0; i < arrayLength; i++) {
+						if(reqparts[i] === 'api') {
+							version = reqparts[i+1];
+							method = reqparts[i+2];
+						}
+					}
+					
+					//if not set, default
+					if(!version) {
+						version = defaultVersion;
+					}
+					
+					if(method) {
+						if(req.method=='POST') {
 
-					if (uri === '/api/v1/info') {
-						apiv1.fetchInfo(data, callback);
-					} else if (uri === '/api/v1/teams') {
-						apiv1.fetchTeams(data, callback);
-					} else if (uri === '/api/v1/pages') {
-						apiv1.fetchPages(data, callback);						
-					} else if (uri === '/api/v1/schedule') {
-						apiv1.fetchSchedule(data, callback);	
-					} else if (uri === '/api/v1/roster') {
-						apiv1.fetchRoster(data, callback);	
-					} else if (uri === '/api/v1/coaches') {
-						apiv1.fetchCoaches(data, callback);	
-					} else if (uri === '/api/v1/news') {
-						apiv1.fetchNews(data, callback);
-					} else if (uri === '/api/v1/galleries') {
-						apiv1.fetchGalleries(data, callback);
-					} else if (uri === '/api/v1/photos') {
-						apiv1.fetchPhotos(data, callback);							
+						
+						} else {
+							var fn = 'fetch' + method;
+							
+							if (fn in api[version]) {
+								//function exists
+								api[version][fn](data, callback);	
+							}
+							else {
+								//function does not exist
+								console.log("Error: could not find " + version + "/" + fn + " API method");
+								res.writeHead(400, {'Content-Type': 'application/json'});
+								res.write('{"error": "API method not found"}');
+								res.end();							  
+							}				
+						}						
 					} else {
-						apiv1.serveFromDisk(uri, res);
-					}					
+						//else server from disk (html, images, favicon, ...)						
+						api[version]["serveFromDisk"](uri, res);
+					}
+					
 				});
 			});
 			

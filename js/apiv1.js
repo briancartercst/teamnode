@@ -266,6 +266,26 @@ var apiV1 = (function () {
 		} else {
 			callback(new Error('Missing teamid'));
 		}
+	};	
+
+	var fetchTournaments = function(data, callback) {
+		console.log('api v1: fetchTournaments: data = ' + JSON.stringify(data));
+		var	dbStatement = db.prepare('SELECT id, widget FROM tournaments WHERE teamid = (?)');	
+		var jsonData = { tournaments: [] };			
+	
+		if(data.teamid) {	
+			dbStatement.each([data.teamid],function (err, row) {
+				if(err) {
+					callback(err);
+				} else {
+					jsonData.tournaments.push({id: row.id, widget: row.widget});
+				}
+			}, function () {
+				callback(null,jsonData);
+			});
+		} else {
+			callback(new Error('Missing teamid'));
+		}
 	};		
  
 	//Expose methods as public
@@ -279,22 +299,24 @@ var apiV1 = (function () {
 		fetchCoaches: fetchCoaches,
 		fetchNews: fetchNews,
 		fetchGalleries: fetchGalleries,
-		fetchPhotos: fetchPhotos
+		fetchPhotos: fetchPhotos,
+		fetchTournaments: fetchTournaments
 	};
 	
 })();
 
 //Export functions that are exposed for use by other modules
 exports.serveFromDisk = apiV1.serveFromDisk;
-exports.fetchInfo = apiV1.fetchInfo;
-exports.fetchTeams = apiV1.fetchTeams;
-exports.fetchPages = apiV1.fetchPages;
-exports.fetchSchedule = apiV1.fetchSchedule;
-exports.fetchRoster = apiV1.fetchRoster;
-exports.fetchCoaches = apiV1.fetchCoaches;
-exports.fetchNews = apiV1.fetchNews;
-exports.fetchGalleries = apiV1.fetchGalleries;
-exports.fetchPhotos = apiV1.fetchPhotos;
+exports.fetchinfo = apiV1.fetchInfo;
+exports.fetchteams = apiV1.fetchTeams;
+exports.fetchpages = apiV1.fetchPages;
+exports.fetchschedule = apiV1.fetchSchedule;
+exports.fetchroster = apiV1.fetchRoster;
+exports.fetchcoaches = apiV1.fetchCoaches;
+exports.fetchnews = apiV1.fetchNews;
+exports.fetchgalleries = apiV1.fetchGalleries;
+exports.fetchphotos = apiV1.fetchPhotos;
+exports.fetchtournaments = apiV1.fetchTournaments;
 
 
 

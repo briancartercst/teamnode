@@ -118,7 +118,18 @@ var teamnode = (function () {
 			cache: true,
 			data: data			
 		});
-	}		
+	}
+
+	var fetchTournaments = function(data) {
+		//console.log("in fetchPhotos - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/tournaments', 
+			dataType: 'json', contentType: 'application/json',
+			type: "GET",
+			cache: true,
+			data: data			
+		});
+	}	
 	
 
 	//Public functions add here; Private otherwise
