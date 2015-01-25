@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title></title>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/site.js"></script>
+</head>
+<body>
+
+  <div class="jumbotron jumbotron-ad">
+    <div class="container">
+      <h1 class="sitename"></h1>
+    </div>
+  </div>  
+  
+  <div class="container">  
+
+    <div id="logorow" class="row">
+      <div class="col-sm-2">
+        <p>
+        <img src="./img/logo.png" alt="logo">
+        </p>
+      </div>
+      <div class="col-sm-8">
+        <br/>
+        <p class="lead"></p>
+      </div>
+    </div>
+
+    <div class="login">
+		
+	
+	</div>
+
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {		
+		var init = function() {		
+			teamnode.fetchInfo().done( function (data) {
+				//console.log("fetchInfo done: " + JSON.stringify(data));				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);				
+			});
+			
+			teamnode.fetchTeams().done( function (data) {
+				//console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				
+				$.each(data.teams, function (i, value) {
+					//console.log('index.html fetchteams value: ' + JSON.stringify(value));				
+					html  +=  
+						'<div class="col-sm-5">' +
+						'    <p>' +
+						'      <a id="';html+=value.id;
+									html+='" class="btn btn-block btn-primary btn-large" style="min-height:100px;padding-top:30px;background:';
+									html+=value.background +';color:';
+									html+=value.fontcolor+';" href="home?teamid=' + value.id  + '">';
+									html += value.name;
+					html += 
+						'      </a> ' +
+						'    </p> ' + 
+						'</div>';
+				});
+				
+				html += '</div>';
+				$('.teamlist').html(html);				
+			});	//fetchTeams
+			
+		}; //init
+	
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+		};
+
+	})();
+	
+	$(document).ready(function () {
+		page.init();	
+	});	
+
+</script>
+    <div class="footer"></div>
+  </div>  <!-- container -->  
+</body>
+</html>

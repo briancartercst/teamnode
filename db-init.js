@@ -104,7 +104,12 @@ db.serialize(function() {
 	
 		console.log("-- tournament");
 		db.run('CREATE TABLE tournaments (id INTEGER PRIMARY KEY, widget TEXT, teamid INTEGER, FOREIGN KEY(teamid) REFERENCES teams(id))');
-		db.run('CREATE INDEX IndexTeamsTournaments ON pages(teamid)');		
+		db.run('CREATE INDEX IndexTeamsTournaments ON pages(teamid)');
+
+		console.log("-- users");
+		db.run('CREATE TABLE users (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, hash TEXT, salt TEXT, active INTEGER)');
+		db.run('CREATE UNIQUE INDEX IF NOT EXISTS UniqueIndexUsersEmail ON users(email)');
+		
 	});	
 	
 	//---------------------------------------------------------------------------------------------------
@@ -143,10 +148,10 @@ db.serialize(function() {
 		console.log("Insert teams started");
 		
 		var dataTeams = [
-			["bv", "Boys Varsity Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic", "#ffffff", "#000000"],	
-			["bjv", "Boys JV Soccer", "#31824A", "#ffffff","John Doe","john.doe@notreal.ic", "#ffffff", "#000000"],
-			["gv", "Girls Varsity Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic", "#ffffff", "#000000"],
-			["gjv", "Girls JV Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@notreal.ic", "#ffffff", "#000000"]
+			["bv", "Boys Varsity Soccer", "#31824A", "#ffffff","John Doe","john.doe@gmail.com", "#ffffff", "#000000"],	
+			["bjv", "Boys JV Soccer", "#31824A", "#ffffff","John Doe","john.doe@gmail.com", "#ffffff", "#000000"],
+			["gv", "Girls Varsity Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@gmail.com", "#ffffff", "#000000"],
+			["gjv", "Girls JV Soccer", "#FFC426", "#000000","Jane Smith","jane.smith@gmail.com", "#ffffff", "#000000"]
 		];
 
 		var stmt = db.prepare('INSERT INTO teams (shorthand, name, background, fontcolor, contactname, contactemail, listbackground, listfontcolor) VALUES (?,?,?,?,?,?,?,?)');
@@ -540,7 +545,7 @@ db.serialize(function() {
 		//Insert tournament
 		console.log("Insert tournament started");
 		
-		var dataPages = [
+		var dataTournament = [
 			["bv", '<iframe frameborder="0" class="maxpreps-widget" src="http://www.maxpreps.com/widgets/tournament.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&amp;ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&amp;bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a&amp;width=1200&amp;height=900&amp;memeberid=5c84e3b8-99be-42ac-a048-e011fc2d312e&amp;allow-scrollbar=true&amp;ref=http%3A%2F%2Ffloydcentralsoccer.org%2Ftournament.html" style="width: 1200px; height: 900px; overflow: auto;"></iframe><script type="text/javascript">(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text/javascript\';mp.async=true;mp.src=\'http://www.maxpreps.com/includes/js/widget/widget.compressed.js\';h.appendChild(mp);})(document);</script>'],	
 			["bjv", '<iframe frameborder="0" class="maxpreps-widget" src="http://www.maxpreps.com/widgets/tournament.aspx?tournamentid=f7904f71-a13e-e411-b4d2-002655e6c45a&amp;ssid=f9bafe0d-45cb-4693-aa16-f8766dc2f9fb&amp;bracketid=3e8b7250-3e40-e411-b4d2-002655e6c45a&amp;width=1200&amp;height=900&amp;memeberid=5c84e3b8-99be-42ac-a048-e011fc2d312e&amp;allow-scrollbar=true&amp;ref=http%3A%2F%2Ffloydcentralsoccer.org%2Ftournament.html" style="width: 1200px; height: 900px; overflow: auto;"></iframe><script type="text/javascript">(function(d){var mp = d.createElement(\'script\'),h=d.getElementsByTagName(\'head\')[0];mp.type=\'text/javascript\';mp.async=true;mp.src=\'http://www.maxpreps.com/includes/js/widget/widget.compressed.js\';h.appendChild(mp);})(document);</script>'],	
 			["gv", '<iframe frameborder="0" class="maxpreps-widget" src="http://www.maxpreps.com/widgets/tournament.aspx?tournamentid=ce329d7b-dc40-e411-b4d2-002655e6c45a&amp;ssid=8a56a490-d455-4969-a16a-0fdfc001e119&amp;bracketid=dcc67f6c-6a42-e411-b4d2-002655e6c45a&amp;width=1200&amp;height=900&amp;memeberid=5c84e3b8-99be-42ac-a048-e011fc2d312e&amp;allow-scrollbar=true&amp;ref=http%3A%2F%2Ffloydcentralsoccer.org%2Ftournament.html" style="width: 1200px; height: 900px; overflow: auto;"></iframe>'],	
@@ -549,9 +554,9 @@ db.serialize(function() {
 
 		var stmt = db.prepare('INSERT INTO tournaments (widget, teamid) VALUES (?, ?)');
 	  
-		for (i = 0; i < dataPages.length; i += 1) {
-			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataPages[i][0]], function (error, row) {
-				var current = dataPages[row['i']];
+		for (i = 0; i < dataTournament.length; i += 1) {
+			db.get("SELECT " + i + " as i, id as teamid FROM teams WHERE shorthand=?", [dataTournament[i][0]], function (error, row) {
+				var current = dataTournament[row['i']];
 				stmt.run(current[1], row['teamid'], function (err) {
 					if(err) {
 						console.log('Team Tournament add error: ' + err);
@@ -560,6 +565,29 @@ db.serialize(function() {
 					}
 				});
 			});		
+		};
+	});	
+
+	db.serialize(function() {
+		//Insert users
+		console.log("Insert users started");
+		
+		var data = [
+			["John", "Doe", "john.doe@gmail.com", "af9aa05061211a6d659fb4a08ee36d7694d7b7c7315e8f3b", "ad7ea3e625cd4267b14a7598fa0ff446", 1],
+			["Jane", "Smith", "jane.smith@gmail.com", "bcfcad982fff5bfcb72426418a4018f5053181690d45b1f7", "9852f94c4c234d9eb242a0c08e665a8e", 1]			
+		];
+
+		var stmt = db.prepare('INSERT INTO users (firstname, lastname, email, hash, salt, active) VALUES (?, ?, ?, ?, ?, ?)');
+	  
+		for (i = 0; i < data.length; i += 1) {
+			var current = data[i];
+			stmt.run(current[0], current[1], current[2], current[3], current[4], current[5], function (err) {
+				if(err) {
+					console.log('User add error: ' + err);
+				} else {
+					console.log('User Add: ' + current[0] + ' ' + current[1]);
+				}
+			});
 		};
 	});		
 

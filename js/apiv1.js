@@ -5,6 +5,7 @@ var path = require('path');
 var fs = require('fs');
 var querystring = require('querystring');
 var sqlite3 = require('sqlite3');
+var crypto = require('crypto');
 
 //Revealing Module Design Pattern 
 //Immediately-Invoked-Function-Expression, it declares a function, which then calls itself immediately 
@@ -286,7 +287,71 @@ var apiV1 = (function () {
 		} else {
 			callback(new Error('Missing teamid'));
 		}
-	};		
+	};
+
+	var fetchLogin = function(data, callback) {
+		console.log('api v1: fetchLogin: data = ' + JSON.stringify(data));
+		
+		var iterations = 1000;
+		var keylen = 24; // bytes
+		var jsonData = { users: [] };
+		
+		var	dbStatement = db.prepare('SELECT id, firstname, lastname, email, hash, salt, active FROM users WHERE email = (?)');
+		var currentrow;
+		
+		if(data.userid && data.password) {	
+			dbStatement.each([data.userid],function (err, row) {
+				currentrow = row;
+				//console.log('api v1: fetchLogin: row = ' + JSON.stringify(row));
+				
+				if(err) {
+					callback(err);
+				} else {
+					if( row.active === 1) {
+						crypto.pbkdf2(data.password, row.salt, iterations, keylen, callbackhash);	
+					} else {
+						callback(new Error('User id or password incorrect'));
+					}
+				}
+			}, function(err, rows) {
+			  if (rows == 0) {
+				callback(new Error('User id or password incorrect'));
+			  }
+			});			
+		} else {
+			callback(new Error('User id or password incorrect'));
+		}		
+		
+		var callbackhash = function(err, key){
+			var hexHash = Buffer(key, 'binary').toString('hex');
+			
+			if(err) {
+				callback(new Error(err));				
+			} else {
+				if( currentrow.hash === hexHash ) {
+					var _sym = 'abcdefghijklmnopqrstuvwxyz1234567890';
+					var str = '';
+
+					for(var i = 0; i < keylen * 2; i++) {
+						str += _sym[parseInt(Math.random() * (_sym.length))];
+					}
+					
+					crypto.pbkdf2(str, currentrow.salt, iterations, keylen, callbacksession);
+
+				} else {
+					callback(new Error('User id or password incorrect'));
+				}
+			}
+		};
+		
+		var callbacksession = function(err, key){		
+			var hexHash = Buffer(key, 'binary').toString('hex');
+			jsonData.users.push({sessionid: hexHash, firstname: currentrow.firstname, lastname: currentrow.lastname, email: currentrow.email});
+			callback(null,jsonData);
+		}
+
+	};
+	
  
 	//Expose methods as public
 	return {
@@ -300,7 +365,8 @@ var apiV1 = (function () {
 		fetchNews: fetchNews,
 		fetchGalleries: fetchGalleries,
 		fetchPhotos: fetchPhotos,
-		fetchTournaments: fetchTournaments
+		fetchTournaments: fetchTournaments,
+		fetchLogin: fetchLogin
 	};
 	
 })();
@@ -317,6 +383,7 @@ exports.fetchnews = apiV1.fetchNews;
 exports.fetchgalleries = apiV1.fetchGalleries;
 exports.fetchphotos = apiV1.fetchPhotos;
 exports.fetchtournaments = apiV1.fetchTournaments;
+exports.fetchlogin = apiV1.fetchLogin;
 
 
 
