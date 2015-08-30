@@ -64,6 +64,17 @@ var teamnode = (function () {
 			data: data			
 		});
 	}	
+	
+	var updateSchedule = function(data) {
+		console.log("in updateSchedule - data = " + JSON.stringify(data));
+		
+		return $.ajax({ url: 'api/v1/schedule', 
+			dataType: 'json', contentType: 'application/json',
+			type: "PUT",
+			cache: true,
+			data: JSON.stringify(data)			
+		});
+	}	
 
 	var fetchRoster = function(data) {
 		//console.log("in fetchRosters - data = " + JSON.stringify(data));
@@ -140,6 +151,7 @@ var teamnode = (function () {
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
 		fetchSchedule: fetchSchedule,
+		updateSchedule: updateSchedule,
 		fetchRoster: fetchRoster,
 		fetchNews: fetchNews,
 		fetchCoaches: fetchCoaches,

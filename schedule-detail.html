@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <title></title>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/site.js"></script>
+</head>
+<body>
+	<div class="header"></div>
+
+	<div class="container">
+	<h3>
+	<p style="font-size: 18px;">
+	<a href="/">Portal</a>&nbsp;/&nbsp;<a href="index">Floyd Central</a>&nbsp;/&nbsp;<a class="homeref teamname" href="home"></a>&nbsp;/&nbsp;<a class="scheduleref" href="schedule">Schedule</a>&nbsp;/&nbsp;<span>Details</span>
+	</p>	
+	</h3> 
+	</div>
+  
+  <div class="container">
+    <h2 class="page-header">Schedule</h2> 
+    <div class="schedules"></div>
+
+
+	<p>Type 'correct' to validate.</p>
+	<form role="form">
+	  <div class="form-group">
+		<label for="validate">id</label>
+		<input type="text" class="form-control" id="id">
+	  </div>	
+	  <div class="form-group">
+		<label for="validate">Date</label>
+		<input type="date" class="form-control" id="date">
+	  </div>
+	  <div class="form-group">
+		<label for="validate">Time</label>
+		<input type="time" class="form-control" id="time">
+	  </div>
+	  <div class="form-group">
+		<label for="validate">Opponent</label>
+		<input type="text" class="form-control" id="opponent">
+	  </div>
+	  <div class="form-group">
+		<label for="validate">Location</label>
+		<input type="text" class="form-control" id="location">
+	  </div>
+	  <div class="form-group">
+		<label for="validate">Team Score</label>
+		<input type="text" class="form-control" id="teamscore">
+	  </div>
+	  <div class="form-group">
+		<label for="validate">Opponent Score</label>
+		<input type="text" class="form-control" id="opponentscore">
+	  </div>	  
+	  <button type="submit" class="btn btn-success">Submit</button>
+	</form>
+	<span></span>
+	
+<script>
+	//Revealing Module Design Pattern 
+	var page = (function () {
+		var init = function() {
+			var team = {};
+			team["teamid"] = getQueryVariable("teamid");
+			
+			teamnode.fetchInfo().done( function (data) {
+				//console.log("fetchInfo done: " + JSON.stringify(data));
+				
+				document.title = data.sitename;
+				$('.sitename').html(data.sitename);
+				$('.lead').html(data.sitewelcome);	
+				$('.homeref').attr('href','home?teamid='+ team["teamid"]);
+				$('.scheduleref').attr('href','schedule?teamid='+ team["teamid"]);
+			});			
+		
+			teamnode.fetchTeams(team).done( function (data) {
+				//console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				team = data.teams[0];
+				team.teamid = team.id;
+				$('.teamname').html(team.name);	
+			})
+			
+			$('#id').value = '1';
+	
+		}	
+	
+		$( "form" ).submit(function( event ) {
+		/*
+		  if ( $( "input:first" ).val() === "correct" ) {
+			$( "span" ).text( "Validated..." ).show();
+			return;
+		  }
+		 
+		  $( "span" ).text( "Not valid!" ).show().fadeOut( 1000 );
+		  */
+		  
+		  var input = {};
+		  input.id = $("#id").val();
+		  input.date = $("#date").val();
+		  input.time = $("#time").val();
+		  input.opponent = $("#opponent").val();
+		  input.location = $("#location").val();
+		  
+		  
+		  teamnode.updateSchedule(input);
+		  event.preventDefault();
+		});
+
+		//Public functions add here; Private otherwise
+		return {
+			init: init,
+		}
+
+	})();
+	
+	$(document).ready(function () {
+		page.init();
+
+	});
+
+
+</script>	
+     
+
+</body>
+</html>

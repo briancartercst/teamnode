@@ -67,6 +67,7 @@
 					
 					$.each(data.results, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
+						html += '<a href="schedule-detail?teamid=' + team.id + '&scheduleid=' + value.id + '">';
 						html += '<div class="row alert alert-neutral" role="alert"';
 						html += ' style="color:black"';
 						html += ';">';	
@@ -83,7 +84,8 @@
 						'  <div class="col-sm-2">' +
 						'      <span>';html+=value.score + " " + value.result;html+='</span>' +
 						'  </div>    ' +    
-						'</div> ';
+						'</div> ' +
+						'</a>';
 					});
 
 					$('.schedules').html(html);			

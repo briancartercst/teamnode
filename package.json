@@ -1,0 +1,50 @@
+{
+  "name": "Teamnode",
+  "description": "Teamnode - a sports team site",
+  "version": "0.0.2",
+  "author": "Brian Carter <briancarter@chipsofttech.com>",
+  "main": "server.js",
+  "directories": {
+    "lib": "./lib"
+  },
+  "keywords": [
+    "mongodb",
+    "mongo",
+    "db",
+    "rest",
+    "restful",
+    "api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://?????"
+  },
+  "bugs": {
+    "url": "https://git.chipsofttech.com/?????"
+  },
+  "dependencies": {
+    "cluster": "*",
+    "url": "*",
+	"http": "*",
+	"path": "*",
+	"fs": "*",
+	"querystring": "*",
+	"sqlite3": "*",
+	"crypto": "*"
+  },
+  "devDependencies": {
+    "supertest": "*",
+    "mocha": "*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "server": "./bin/server"
+  }
+}

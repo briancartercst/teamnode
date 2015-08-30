@@ -127,8 +127,20 @@ var main = (function () {
 					}
 					
 					if(method) {
-						if(req.method=='POST') {
-
+						if(req.method=='PUT') {
+							var fn = 'update' + method;
+							
+							if (fn in api[version]) {
+								//function exists
+								api[version][fn](data, callback);	
+							}
+							else {
+								//function does not exist
+								console.log("Error: could not find " + version + "/" + fn + " API method");
+								res.writeHead(400, {'Content-Type': 'application/json'});
+								res.write('{"error": "API method not found"}');
+								res.end();							  
+							}				
 						
 						} else {
 							var fn = 'fetch' + method;

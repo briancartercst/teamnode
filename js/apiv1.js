@@ -169,6 +169,18 @@ var apiV1 = (function () {
 		}
 	};	
 
+	var updateSchedule = function(data, callback) {
+		console.log('api v1: updateSchedule');
+	
+		console.log('schedule - ' + JSON.stringify(data));
+		if(data) {
+			db.run("UPDATE schedules SET date = ?, time = ?, opponent = ?, location = ?, teamscore = ?, opponentscore = ? WHERE id = ?", 
+			[data.date, data.time, data.opponent, data.location, data.teamscore, data.opponentscore, data.id ]);
+		} else {
+			callback(new Error('Missing schedule id'));
+		}
+	};		
+	
 	var fetchRoster = function(data, callback) {
 		console.log('api v1: fetchRoster');
 		var	dbStatement = db.prepare('SELECT id, firstname, lastname, position, grade, jersey FROM rosters WHERE teamid = (?)');	
@@ -359,7 +371,8 @@ var apiV1 = (function () {
 		fetchInfo: fetchInfo,
 		fetchTeams: fetchTeams,
 		fetchPages: fetchPages,
-		fetchSchedule: fetchSchedule,		
+		fetchSchedule: fetchSchedule,
+		updateSchedule: updateSchedule,
 		fetchRoster: fetchRoster,
 		fetchCoaches: fetchCoaches,
 		fetchNews: fetchNews,
@@ -377,6 +390,7 @@ exports.fetchinfo = apiV1.fetchInfo;
 exports.fetchteams = apiV1.fetchTeams;
 exports.fetchpages = apiV1.fetchPages;
 exports.fetchschedule = apiV1.fetchSchedule;
+exports.updateschedule = apiV1.updateSchedule;
 exports.fetchroster = apiV1.fetchRoster;
 exports.fetchcoaches = apiV1.fetchCoaches;
 exports.fetchnews = apiV1.fetchNews;
