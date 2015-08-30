@@ -57,13 +57,18 @@ var teamnode = (function () {
 	var fetchSchedule = function(data) {
 		//console.log("in fetchSchedule - data = " + JSON.stringify(data));
 		
-		return $.ajax({ url: 'api/v1/schedule', 
+		return $.ajax({ url: "http://hands.com:3000/api/fc/soccer/schedules",
 			dataType: 'json', contentType: 'application/json',
 			type: "GET",
 			cache: true,
-			data: data			
+			data: data,			
+			beforeSend: setHeader			
 		});
-	}	
+		
+		function setHeader(xhr) {
+			xhr.setRequestHeader('authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjaGlwc29mdHRlY2guY29tIiwiY29tcGFueSI6IkNoaXBwZXdhIFNvZnR3YXJlIFRlY2hub2xvZ3ksIExMQyIsImVtYWlsIjoiYnJpYW5jYXJ0ZXJAY2hpcHNvZnR0ZWNoLmNvbSIsInBlcm1pc3Npb25zIjp7ImZjIjp7ImFkbWluIjoxfX0sImlhdCI6MTQ0MDk0MDA5N30.2-ImTT4L07buUlVWS3__XIXBMsm2S75JQe4B1Esr-1I');
+		}		
+	}
 	
 	var updateSchedule = function(data) {
 		console.log("in updateSchedule - data = " + JSON.stringify(data));

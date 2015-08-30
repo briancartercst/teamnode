@@ -61,6 +61,7 @@
 		var init = function() {
 			var team = {};
 			team["teamid"] = getQueryVariable("teamid");
+			team["scheduleid"] = getQueryVariable("scheduleid");
 			
 			teamnode.fetchInfo().done( function (data) {
 				//console.log("fetchInfo done: " + JSON.stringify(data));
@@ -79,6 +80,14 @@
 				team.teamid = team.id;
 				$('.teamname').html(team.name);	
 			})
+			
+			teamnode.fetchSchedule(team).done( function (data) {
+				//console.log("fetchTeams done: " + JSON.stringify(data));
+				var html = "";
+				team = data.teams[0];
+				team.teamid = team.id;
+				$('.teamname').html(team.name);	
+			})			
 			
 			$('#id').value = '1';
 	

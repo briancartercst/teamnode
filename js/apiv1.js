@@ -168,7 +168,7 @@ var apiV1 = (function () {
 			callback(new Error('Missing teamid'));
 		}
 	};	
-
+	
 	var updateSchedule = function(data, callback) {
 		console.log('api v1: updateSchedule');
 	

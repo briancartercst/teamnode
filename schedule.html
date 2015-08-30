@@ -43,7 +43,7 @@
 				team.teamid = team.id;
 				$('.teamname').html(team.name);	
 				
-				teamnode.fetchSchedule({teamid:team.id}).done( function (data) {
+				teamnode.fetchSchedule({query:{teamid:team.id}}).done( function (data) {
 					//console.log("fetchSchedules done: " + JSON.stringify(data));
 					var html = "";
 					
@@ -65,9 +65,9 @@
 					html += '	</div>        ';
 					html += '</div>			';					
 					
-					$.each(data.results, function (i, value) {
+					$.each(data, function (i, value) {
 						//console.log('value: ' + JSON.stringify(value));
-						html += '<a href="schedule-detail?teamid=' + team.id + '&scheduleid=' + value.id + '">';
+						html += '<a href="schedule-detail?teamid=' + team.id + '&scheduleid=' + value._id + '">';
 						html += '<div class="row alert alert-neutral" role="alert"';
 						html += ' style="color:black"';
 						html += ';">';	
